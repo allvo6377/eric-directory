@@ -1,0 +1,1329 @@
+[
+  {
+    "id": "holy-family-basilica",
+    "name": "Holy Family Basilica",
+    "type": "Minor Basilica",
+    "patron": "The Holy Family",
+    "diocese": "Archdiocese of Nairobi",
+    "deanery": "",
+    "city": "Nairobi",
+    "county": "Nairobi",
+    "address": "City Hall Way, Central Business District, Nairobi",
+    "poBox": "",
+    "coords": {
+      "lat": -1.28837,
+      "lng": 36.82334
+    },
+    "founded": 1904,
+    "tagline": "The cathedral church at the heart of the capital.",
+    "description": "Standing at the centre of Nairobi's Central Business District, Holy Family Basilica is the cathedral of the Archdiocese of Nairobi and one of the most recognisable churches in East Africa. The present building, with its tall twin clerestory and soaring nave, was completed in 1963 and elevated to the status of minor basilica. It serves a vast and diverse city congregation, from early-morning commuters to Sunday families.",
+    "priest": {
+      "name": "Rev. Fr. John Mwangi",
+      "title": "Rector"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Peter Kamau",
+        "title": "Assistant Priest"
+      },
+      {
+        "name": "Rev. Fr. Daniel Otieno",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 101",
+      "email": "parish@holyfamilybasilica.example",
+      "website": "holyfamilybasilica.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 5:00 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 1:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "6:30 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "8:30 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "10:30 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "5:30 PM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "7:00 AM & 1:15 PM",
+        "language": "English"
+      },
+      {
+        "day": "Saturday",
+        "time": "7:00 AM",
+        "language": "Swahili"
+      }
+    ],
+    "confessions": "Mon – Sat, 12:00 PM – 1:00 PM and on request",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick",
+      "Adoration"
+    ],
+    "services": [
+      "Daily Adoration Chapel",
+      "Charismatic Renewal",
+      "Choir & Music Ministry",
+      "Catholic Men & Women Associations"
+    ],
+    "gallery": [
+      "basilica exterior & tower",
+      "main nave & altar",
+      "stained-glass clerestory",
+      "Sunday congregation"
+    ],
+    "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/Holy%20Family%20Basilica%20(Nairobi%2C%20Kenya)%2001.JPG?width=1400",
+    "images": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Holy%20Family%20Basilica%20(Nairobi%2C%20Kenya)%2002.JPG?width=1100",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Lascar%20Holy%20Family%20Basilica%20Cathedral%20(4540191843).jpg?width=1100",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nairobi%20City%20centre%20including%20Basilica.jpg?width=1100"
+    ],
+    "events": [
+      {
+        "date": "Jun 8",
+        "title": "Corpus Christi Procession",
+        "time": "10:30 AM"
+      },
+      {
+        "date": "Jun 14",
+        "title": "Parish Charity Harambee",
+        "time": "9:00 AM"
+      },
+      {
+        "date": "Jun 21",
+        "title": "Youth Sunday & Rally",
+        "time": "8:30 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "consolata-shrine",
+    "name": "Consolata Shrine",
+    "type": "Shrine",
+    "patron": "Our Lady, Consolata",
+    "diocese": "Archdiocese of Nairobi",
+    "deanery": "",
+    "city": "Westlands, Nairobi",
+    "county": "Nairobi",
+    "address": "Consolata Shrine, Westlands, Nairobi",
+    "poBox": "",
+    "coords": {
+      "lat": -1.26276,
+      "lng": 36.80529
+    },
+    "founded": 1922,
+    "tagline": "A quiet Marian shrine run by the Consolata Missionaries.",
+    "description": "Tucked along the edge of Westlands, the Consolata Shrine is cared for by the Consolata Missionary Fathers and dedicated to Our Lady, Consolata — Comforter of the afflicted. Known for its reflective atmosphere and strong music tradition, the shrine draws worshippers from across the city for its well-attended Sunday Masses and evening devotions.",
+    "priest": {
+      "name": "Rev. Fr. Giacomo Rossi, IMC",
+      "title": "Shrine Rector"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Stephen Njoroge, IMC",
+        "title": "Assistant"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 102",
+      "email": "info@consolatashrine.example",
+      "website": "consolatashrine.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:30 AM – 4:30 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "9:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM & 5:30 PM",
+        "language": "English"
+      }
+    ],
+    "confessions": "Saturdays, 4:00 PM – 5:00 PM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Marian Devotions",
+      "Rosary Groups",
+      "Mission Animation",
+      "Youth Fellowship"
+    ],
+    "gallery": [
+      "shrine entrance",
+      "Marian grotto",
+      "altar & sanctuary",
+      "evening devotion"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 7",
+        "title": "Marian Vigil & Rosary",
+        "time": "6:00 PM"
+      },
+      {
+        "date": "Jun 20",
+        "title": "Consolata Feast Novena",
+        "time": "5:30 PM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "st-austins-parish",
+    "name": "St. Austin's Parish",
+    "type": "Parish Church",
+    "patron": "St. Augustine",
+    "diocese": "Archdiocese of Nairobi",
+    "deanery": "",
+    "city": "Lavington, Nairobi",
+    "county": "Nairobi",
+    "address": "Msongari, Lavington, Nairobi",
+    "poBox": "",
+    "coords": {
+      "lat": -1.28717,
+      "lng": 36.77912
+    },
+    "founded": 1899,
+    "tagline": "One of the oldest Catholic missions in Kenya.",
+    "description": "Founded in 1899 by French Holy Ghost missionaries, St. Austin's (Msongari) is among the very first Catholic missions established in Kenya. The parish carries a long history of education and pastoral work, and today serves the leafy neighbourhoods of Lavington and Kileleshwa with a warm, family-oriented community.",
+    "priest": {
+      "name": "Rev. Fr. Anthony Wambua, CSSp",
+      "title": "Parish Priest"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Mark Achieng, CSSp",
+        "title": "Curate"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 103",
+      "email": "office@staustins.example",
+      "website": "staustins.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 5:00 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:30 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:30 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:30 AM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "English"
+      }
+    ],
+    "confessions": "Saturdays, 10:00 AM – 11:00 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Catholic Education Outreach",
+      "Small Christian Communities",
+      "Choir",
+      "Caritas Charity Desk"
+    ],
+    "gallery": [
+      "historic stone church",
+      "parish gardens",
+      "sanctuary",
+      "first communion class"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 15",
+        "title": "Parish Family Day",
+        "time": "10:00 AM"
+      },
+      {
+        "date": "Jun 28",
+        "title": "St. Augustine Talk Series",
+        "time": "4:00 PM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "holy-ghost-cathedral-mombasa",
+    "name": "Holy Ghost Cathedral",
+    "type": "Cathedral",
+    "patron": "The Holy Spirit",
+    "diocese": "Archdiocese of Mombasa",
+    "deanery": "",
+    "city": "Mombasa",
+    "county": "Mombasa",
+    "address": "Nkrumah Road, Mombasa Island",
+    "poBox": "",
+    "coords": {
+      "lat": -4.06097,
+      "lng": 39.66554
+    },
+    "founded": 1918,
+    "tagline": "The coastal cathedral on Mombasa Island.",
+    "description": "Holy Ghost Cathedral is the seat of the Archdiocese of Mombasa, set among the historic streets of Mombasa Island. With its distinctive towers and coastal Swahili-influenced setting, it has served the diverse port city for over a century and remains a landmark of the old town.",
+    "priest": {
+      "name": "Rev. Fr. Charles Mwakio",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Joseph Mwacharo",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 104",
+      "email": "cathedral@mombasaarchdiocese.example",
+      "website": "mombasaarchdiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 4:30 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM & 5:30 PM",
+        "language": "Swahili"
+      }
+    ],
+    "confessions": "Saturdays, 4:30 PM – 5:30 PM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Port Chaplaincy",
+      "Swahili Choir",
+      "Catholic Women Association",
+      "Youth Ministry"
+    ],
+    "gallery": [
+      "cathedral towers",
+      "main aisle",
+      "sanctuary & altar",
+      "coastal parish life"
+    ],
+    "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/Catholic%20Church%20in%20Mombasa.JPG?width=1400",
+    "images": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The%20Roman%20Archdiocese%20of%20Mombasa%2C%20Holy%20Ghost%20Cathedral.jpg?width=1100",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Holy%20Ghost%20RC%20cathedral%20in%20Mombasa.jpg?width=1100",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Holy%20Ghost%20Cathedral%20Mombasa.JPG?width=1100"
+    ],
+    "events": [
+      {
+        "date": "Jun 12",
+        "title": "Sea Sunday Blessing",
+        "time": "9:00 AM"
+      },
+      {
+        "date": "Jun 22",
+        "title": "Archdiocesan Choir Festival",
+        "time": "2:00 PM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "st-teresas-cathedral-kisumu",
+    "name": "St. Teresa's Cathedral",
+    "type": "Cathedral",
+    "patron": "St. Thérèse of Lisieux",
+    "diocese": "Archdiocese of Kisumu",
+    "deanery": "",
+    "city": "Kisumu",
+    "county": "Kisumu",
+    "address": "Oginga Odinga Street, Kisumu",
+    "poBox": "",
+    "coords": {
+      "lat": -0.09813,
+      "lng": 34.75726
+    },
+    "founded": 1934,
+    "tagline": "The lakeside cathedral of the Kisumu Archdiocese.",
+    "description": "Overlooking the lakeside city of Kisumu, St. Teresa's Cathedral is the mother church of the Archdiocese of Kisumu. It serves a vibrant western-Kenya congregation known for its lively liturgical music and strong tradition of Small Christian Communities.",
+    "priest": {
+      "name": "Rev. Fr. Vincent Onyango",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Maurice Odhiambo",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 105",
+      "email": "cathedral@kisumuarchdiocese.example",
+      "website": "kisumuarchdiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 5:00 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:30 AM – 12:30 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "English"
+      }
+    ],
+    "confessions": "Saturdays, 9:00 AM – 10:00 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Small Christian Communities",
+      "Cathedral Choir",
+      "Catholic Youth Network",
+      "Charity & Outreach"
+    ],
+    "gallery": [
+      "cathedral front",
+      "interior nave",
+      "altar",
+      "lakeside community"
+    ],
+    "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/St-Therese-of-Lisieux-Cathedral-RC-Archdiocese-of-Kisumu-Kenya.jpg?width=1400",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 9",
+        "title": "Diocesan Catechists' Day",
+        "time": "10:00 AM"
+      },
+      {
+        "date": "Jun 25",
+        "title": "Lake Region Youth Mass",
+        "time": "9:00 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "consolata-cathedral-nyeri",
+    "name": "Our Lady of Consolata Cathedral",
+    "type": "Cathedral",
+    "patron": "Our Lady, Consolata",
+    "diocese": "Archdiocese of Nyeri",
+    "deanery": "",
+    "city": "Nyeri",
+    "county": "Nyeri",
+    "address": "Cathedral Road, Nyeri Town",
+    "poBox": "",
+    "coords": {
+      "lat": -0.42012,
+      "lng": 36.94812
+    },
+    "founded": 1907,
+    "tagline": "A historic highland cathedral in the shadow of Mt. Kenya.",
+    "description": "Set in the central highlands beneath Mt. Kenya, the Consolata Cathedral in Nyeri is the seat of the Archdiocese of Nyeri and a cradle of the Consolata Missionary presence in Kenya. The cathedral is closely tied to the legacy of Blessed Sister Irene Stefani (Nyaatha), whose memory draws pilgrims to the region.",
+    "priest": {
+      "name": "Rev. Fr. Francis Maina",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Simon Gichuru",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 106",
+      "email": "cathedral@nyeriarchdiocese.example",
+      "website": "nyeriarchdiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 4:30 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Kikuyu"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "Kikuyu"
+      }
+    ],
+    "confessions": "Saturdays, 8:00 AM – 9:00 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Nyaatha Pilgrimage Desk",
+      "Cathedral Choir",
+      "Catholic Men Association",
+      "Catechesis"
+    ],
+    "gallery": [
+      "highland cathedral",
+      "memorial chapel",
+      "sanctuary",
+      "pilgrims at prayer"
+    ],
+    "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/Nyeri%20katedral.jpg?width=1400",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 10",
+        "title": "Blessed Nyaatha Memorial Mass",
+        "time": "10:00 AM"
+      },
+      {
+        "date": "Jun 24",
+        "title": "Highland Deanery Gathering",
+        "time": "9:30 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "christ-the-king-nakuru",
+    "name": "Christ the King Cathedral",
+    "type": "Cathedral",
+    "patron": "Christ the King",
+    "diocese": "Diocese of Nakuru",
+    "deanery": "",
+    "city": "Nakuru",
+    "county": "Nakuru",
+    "address": "Kenyatta Avenue, Nakuru",
+    "poBox": "",
+    "coords": {
+      "lat": -0.28901,
+      "lng": 36.06803
+    },
+    "founded": 1955,
+    "tagline": "The Rift Valley cathedral serving Nakuru city.",
+    "description": "Christ the King Cathedral is the seat of the Diocese of Nakuru, serving the fast-growing Rift Valley city and its surrounding agricultural communities. Its broad congregation reflects the diversity of the region, with Masses in English, Swahili and local languages.",
+    "priest": {
+      "name": "Rev. Fr. Patrick Kiprono",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. George Muturi",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 107",
+      "email": "cathedral@nakurudiocese.example",
+      "website": "nakurudiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 5:00 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 1:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM & 5:15 PM",
+        "language": "English"
+      }
+    ],
+    "confessions": "Saturdays, 10:00 AM – 11:00 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Rift Valley Chaplaincy",
+      "Cathedral Choir",
+      "Youth Ministry",
+      "Caritas Nakuru"
+    ],
+    "gallery": [
+      "cathedral exterior",
+      "main nave",
+      "altar & sanctuary",
+      "parish community"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 11",
+        "title": "Feast of the Sacred Heart",
+        "time": "9:00 AM"
+      },
+      {
+        "date": "Jun 26",
+        "title": "Diocesan Family Day",
+        "time": "10:00 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "sacred-heart-eldoret",
+    "name": "Sacred Heart Cathedral",
+    "type": "Cathedral",
+    "patron": "The Sacred Heart of Jesus",
+    "diocese": "Diocese of Eldoret",
+    "deanery": "",
+    "city": "Eldoret",
+    "county": "Uasin Gishu",
+    "address": "Uganda Road, Eldoret",
+    "poBox": "",
+    "coords": {
+      "lat": 0.51604,
+      "lng": 35.27923
+    },
+    "founded": 1953,
+    "tagline": "The highland cathedral of the North Rift.",
+    "description": "Sacred Heart Cathedral anchors the Diocese of Eldoret in Kenya's North Rift highlands. Serving a growing university town and its rural hinterland, the cathedral is known for its energetic youth and student chaplaincy.",
+    "priest": {
+      "name": "Rev. Fr. Dominic Kiptoo",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Elias Barasa",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 108",
+      "email": "cathedral@eldoretdiocese.example",
+      "website": "eldoretdiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 4:30 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:30 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "English"
+      }
+    ],
+    "confessions": "Saturdays, 9:30 AM – 10:30 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "University Chaplaincy",
+      "Cathedral Choir",
+      "Catholic Students Association",
+      "Outreach Ministry"
+    ],
+    "gallery": [
+      "cathedral front",
+      "interior",
+      "altar",
+      "student congregation"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 13",
+        "title": "Student Chaplaincy Mass",
+        "time": "11:00 AM"
+      },
+      {
+        "date": "Jun 27",
+        "title": "North Rift Vocations Day",
+        "time": "9:00 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "consolata-cathedral-meru",
+    "name": "Consolata Cathedral",
+    "type": "Cathedral",
+    "patron": "Our Lady, Consolata",
+    "diocese": "Diocese of Meru",
+    "deanery": "",
+    "city": "Meru",
+    "county": "Meru",
+    "address": "Tom Mboya Street, Meru Town",
+    "poBox": "",
+    "coords": {
+      "lat": 0.04713,
+      "lng": 37.65003
+    },
+    "founded": 1928,
+    "tagline": "The cathedral serving the eastern slopes of Mt. Kenya.",
+    "description": "Consolata Cathedral in Meru is the seat of the Diocese of Meru, founded through the work of the Consolata Missionaries on the eastern slopes of Mt. Kenya. It serves a strong agricultural community and is a centre of catechesis and local-language liturgy.",
+    "priest": {
+      "name": "Rev. Fr. Lawrence Mutugi",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Julius Kirimi",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 109",
+      "email": "cathedral@merudiocese.example",
+      "website": "merudiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 5:00 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Kimeru"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "Kimeru"
+      }
+    ],
+    "confessions": "Saturdays, 8:30 AM – 9:30 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Catechist Training",
+      "Cathedral Choir",
+      "Catholic Women Association",
+      "Agricultural Cooperative Desk"
+    ],
+    "gallery": [
+      "cathedral exterior",
+      "nave",
+      "sanctuary",
+      "harvest thanksgiving"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 16",
+        "title": "Harvest Thanksgiving Mass",
+        "time": "9:00 AM"
+      },
+      {
+        "date": "Jun 29",
+        "title": "Catechists' Commissioning",
+        "time": "10:00 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "our-lady-lourdes-machakos",
+    "name": "Our Lady of Lourdes Cathedral",
+    "type": "Cathedral",
+    "patron": "Our Lady of Lourdes",
+    "diocese": "Diocese of Machakos",
+    "deanery": "",
+    "city": "Machakos",
+    "county": "Machakos",
+    "address": "Cathedral Road, Machakos Town",
+    "poBox": "",
+    "coords": {
+      "lat": -1.51861,
+      "lng": 37.26342
+    },
+    "founded": 1962,
+    "tagline": "The cathedral of the Ukambani region.",
+    "description": "Our Lady of Lourdes Cathedral is the seat of the Diocese of Machakos, serving the Ukambani region south-east of Nairobi. The cathedral community is known for its devotion to Our Lady and its active outreach across the semi-arid parishes of the diocese.",
+    "priest": {
+      "name": "Rev. Fr. Benedict Mutua",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Albert Musyoka",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 110",
+      "email": "cathedral@machakosdiocese.example",
+      "website": "machakosdiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 4:30 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Kamba"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "Kamba"
+      }
+    ],
+    "confessions": "Saturdays, 9:00 AM – 10:00 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Marian Devotions",
+      "Cathedral Choir",
+      "Caritas Machakos",
+      "Small Christian Communities"
+    ],
+    "gallery": [
+      "cathedral front",
+      "Lourdes grotto",
+      "altar",
+      "parish gathering"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 18",
+        "title": "Lourdes Rosary Procession",
+        "time": "5:00 PM"
+      },
+      {
+        "date": "Jun 30",
+        "title": "Ukambani Deanery Day",
+        "time": "9:30 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "st-josephs-kericho",
+    "name": "St. Joseph's Cathedral",
+    "type": "Cathedral",
+    "patron": "St. Joseph the Worker",
+    "diocese": "Diocese of Kericho",
+    "deanery": "",
+    "city": "Kericho",
+    "county": "Kericho",
+    "address": "Temple Road, Kericho Town",
+    "poBox": "",
+    "coords": {
+      "lat": -0.36925,
+      "lng": 35.28611
+    },
+    "founded": 1995,
+    "tagline": "The cathedral amid Kenya's tea highlands.",
+    "description": "St. Joseph's Cathedral serves the Diocese of Kericho in the heart of Kenya's tea-growing highlands. A younger diocese, its cathedral community brings together tea-estate workers, townsfolk and rural parishes under the patronage of St. Joseph the Worker.",
+    "priest": {
+      "name": "Rev. Fr. Joseph Langat",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Wilson Kirui",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 111",
+      "email": "cathedral@kerichodiocese.example",
+      "website": "kerichodiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 4:30 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:30 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "Kipsigis"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM",
+        "language": "Swahili"
+      }
+    ],
+    "confessions": "Saturdays, 10:00 AM – 11:00 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Workers' Chaplaincy",
+      "Cathedral Choir",
+      "Catholic Men Association",
+      "Youth Ministry"
+    ],
+    "gallery": [
+      "cathedral exterior",
+      "tea-highland setting",
+      "sanctuary",
+      "Sunday assembly"
+    ],
+    "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/Sacred%20Heart%20Cathedral%20of%20Kericho%20Kenya%20by%20John%20Macaslan%20and%20Partners%20Image%20edmund%20sumner.jpg?width=1400",
+    "images": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/KC%20W%20Facade%20Evening.jpg?width=1100",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Kericho%20Cathedral-JamiiForum.png?width=1100"
+    ],
+    "events": [
+      {
+        "date": "Jun 17",
+        "title": "St. Joseph Workers' Mass",
+        "time": "9:00 AM"
+      },
+      {
+        "date": "Jul 1",
+        "title": "Tea Region Youth Camp",
+        "time": "8:00 AM"
+      }
+    ],
+    "source": "seed"
+  },
+  {
+    "id": "our-lady-help-thika",
+    "name": "Our Lady Help of Christians Cathedral",
+    "type": "Cathedral",
+    "patron": "Our Lady Help of Christians",
+    "diocese": "Diocese of Thika",
+    "deanery": "",
+    "city": "Thika",
+    "county": "Kiambu",
+    "address": "Kenyatta Highway, Thika Town",
+    "poBox": "",
+    "coords": {
+      "lat": -1.03326,
+      "lng": 37.06933
+    },
+    "founded": 1996,
+    "tagline": "The cathedral of the industrial town of Thika.",
+    "description": "Our Lady Help of Christians Cathedral is the seat of the Diocese of Thika, serving the bustling industrial town and the surrounding coffee and pineapple country. The cathedral community blends an urban working population with nearby rural parishes.",
+    "priest": {
+      "name": "Rev. Fr. Michael Ngugi",
+      "title": "Cathedral Administrator"
+    },
+    "clergy": [
+      {
+        "name": "Rev. Fr. Paul Karanja",
+        "title": "Assistant Priest"
+      }
+    ],
+    "contact": {
+      "phone": "+254 720 000 112",
+      "email": "cathedral@thikadiocese.example",
+      "website": "thikadiocese.example"
+    },
+    "socials": {},
+    "officeHours": [
+      {
+        "days": "Mon – Fri",
+        "hours": "8:00 AM – 5:00 PM"
+      },
+      {
+        "days": "Saturday",
+        "hours": "8:00 AM – 12:00 PM"
+      },
+      {
+        "days": "Sunday",
+        "hours": "Closed (services only)"
+      }
+    ],
+    "massTimes": [
+      {
+        "day": "Sunday",
+        "time": "7:00 AM",
+        "language": "Kikuyu"
+      },
+      {
+        "day": "Sunday",
+        "time": "9:00 AM",
+        "language": "Swahili"
+      },
+      {
+        "day": "Sunday",
+        "time": "11:00 AM",
+        "language": "English"
+      },
+      {
+        "day": "Weekdays",
+        "time": "6:30 AM & 5:30 PM",
+        "language": "Swahili"
+      }
+    ],
+    "confessions": "Saturdays, 9:30 AM – 10:30 AM",
+    "adoration": "",
+    "sacraments": [
+      "Baptism",
+      "Reconciliation",
+      "Holy Eucharist",
+      "Confirmation",
+      "Holy Matrimony",
+      "Anointing of the Sick"
+    ],
+    "services": [
+      "Industrial Chaplaincy",
+      "Cathedral Choir",
+      "Catholic Women Association",
+      "Caritas Thika"
+    ],
+    "gallery": [
+      "cathedral facade",
+      "main nave",
+      "altar",
+      "town parish life"
+    ],
+    "heroImage": "",
+    "images": [],
+    "events": [
+      {
+        "date": "Jun 19",
+        "title": "Workers' Rosary Evening",
+        "time": "5:30 PM"
+      },
+      {
+        "date": "Jul 2",
+        "title": "Diocesan Catholic Action Day",
+        "time": "9:00 AM"
+      }
+    ],
+    "source": "seed"
+  }
+]

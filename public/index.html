@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ecclesia Kenya — Catholic Parish Directory</title>
+  <meta name="description" content="A public directory of Catholic parishes, cathedrals, basilicas and shrines across the dioceses of Kenya — Mass times, contacts, and locations on an interactive map." />
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Spectral:wght@400;500;600;700&family=Lora:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles-admin.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Vendored libraries (self-hosted so the site has no CDN dependency;
+       only fonts and map tiles load from third parties) -->
+  <script src="vendor/react.production.min.js"></script>
+  <script src="vendor/react-dom.production.min.js"></script>
+  <script src="vendor/babel.min.js"></script>
+  <script src="vendor/leaflet/leaflet.js"></script>
+
+  <!-- data + stores (plain JS) -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/imagesearch.js"></script>
+  <script src="image-slot.js"></script>
+
+  <!-- app (babel) -->
+  <script type="text/babel" src="js/ui.jsx"></script>
+  <script type="text/babel" src="js/map.jsx"></script>
+  <script type="text/babel" src="js/directory.jsx"></script>
+  <script type="text/babel" src="js/dioceses.jsx"></script>
+  <script type="text/babel" src="js/church.jsx"></script>
+  <script type="text/babel" src="js/admin-form.jsx"></script>
+  <script type="text/babel" src="js/admin-import.jsx"></script>
+  <script type="text/babel" src="js/admin-autofill.jsx"></script>
+  <script type="text/babel" src="js/admin-settings.jsx"></script>
+  <script type="text/babel" src="js/admin-login.jsx"></script>
+  <script type="text/babel" src="js/admin.jsx"></script>
+  <script type="text/babel" src="js/app.jsx"></script>
+</body>
+</html>
