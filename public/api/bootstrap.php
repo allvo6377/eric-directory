@@ -14,6 +14,17 @@ const DATA_DIR    = __DIR__ . '/../data';
 const UPLOADS_DIR = __DIR__ . '/../uploads';
 const SEED_FILE   = __DIR__ . '/seed.json';
 
+/** The site's public domain — used for canonical URLs, the sitemap and
+ *  OpenGraph tags. Change here if the site ever moves. */
+const CANONICAL_BASE = 'https://caap.or.ke';
+
+/** Absolutize a site-relative path ("uploads/x.webp" → full URL);
+ *  already-absolute URLs pass through unchanged. */
+function absolute_url(string $path): string {
+    if ($path === '' || preg_match('#^https?://#i', $path)) return $path;
+    return CANONICAL_BASE . '/' . ltrim($path, '/');
+}
+
 error_reporting(E_ALL);
 ini_set('display_errors', '0'); // never leak stack traces to visitors
 

@@ -6,7 +6,22 @@
   <title>Ecclesia Kenya — Catholic Parish Directory</title>
   <meta name="description" content="A public directory of Catholic parishes, cathedrals, basilicas and shrines across the dioceses of Kenya — Mass times, contacts, and locations on an interactive map." />
   <meta name="theme-color" content="#1462b8" />
+  <link rel="canonical" href="https://caap.or.ke/" />
   <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Ecclesia Kenya" />
+  <meta property="og:title" content="Ecclesia Kenya — Catholic Parish Directory" />
+  <meta property="og:description" content="Find a Catholic parish anywhere in Kenya: Mass times, contacts and locations on an interactive map." />
+  <meta property="og:url" content="https://caap.or.ke/" />
+  <meta property="og:image" content="https://caap.or.ke/assets/logo.jpg" />
+  <meta name="twitter:card" content="summary" />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"Ecclesia Kenya",
+   "url":"https://caap.or.ke/",
+   "description":"A directory of Catholic parishes, cathedrals and shrines across the dioceses of Kenya."}
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,7 +45,6 @@
        only fonts and map tiles load from third parties) -->
   <script src="vendor/react.production.min.js"></script>
   <script src="vendor/react-dom.production.min.js"></script>
-  <script src="vendor/babel.min.js"></script>
   <script src="vendor/leaflet/leaflet.js"></script>
 
   <!-- data + stores (plain JS) -->
@@ -42,18 +56,8 @@
   <script src="js/imagesearch.js"></script>
   <script src="image-slot.js"></script>
 
-  <!-- app (babel) -->
-  <script type="text/babel" src="js/ui.jsx"></script>
-  <script type="text/babel" src="js/map.jsx"></script>
-  <script type="text/babel" src="js/directory.jsx"></script>
-  <script type="text/babel" src="js/dioceses.jsx"></script>
-  <script type="text/babel" src="js/church.jsx"></script>
-  <script type="text/babel" src="js/admin-form.jsx"></script>
-  <script type="text/babel" src="js/admin-import.jsx"></script>
-  <script type="text/babel" src="js/admin-autofill.jsx"></script>
-  <script type="text/babel" src="js/admin-settings.jsx"></script>
-  <script type="text/babel" src="js/admin-login.jsx"></script>
-  <script type="text/babel" src="js/admin.jsx"></script>
-  <script type="text/babel" src="js/app.jsx"></script>
+  <!-- app — precompiled bundle (regenerate with: node scripts/build-js.js;
+       for build-free live editing of the .jsx sources use index-dev.html) -->
+  <script src="js/build/app.bundle.js"></script>
 </body>
 </html>

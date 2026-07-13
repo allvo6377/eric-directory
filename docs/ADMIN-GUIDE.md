@@ -107,7 +107,20 @@ Three ways, all end up saved on the server and visible to everyone:
    are typically CC-licensed; if you keep them, it's good practice to credit the
    photographer (see ROADMAP for a built-in credits feature).
 
-## 7. Replacing the sample data (important, before launch)
+## 7. Visitor suggestions (the moderation queue)
+
+Every parish page has a **"Suggest an update"** button. Visitors use it to report
+outdated Mass times or wrong contacts — nothing changes on the site until you act.
+
+- **Admin → Suggestions** (the button shows a count of pending items) opens the
+  queue: each entry shows the parish, the message, when it arrived, and the
+  sender's name/contact if they left one.
+- Click the parish name to open its page, make the correction yourself via
+  *Edit*, then mark the suggestion **✓ resolved** (or 🗑 delete it if it's noise).
+- Spam protection is built in (hidden trap field + a limit of 5 submissions per
+  hour per connection), so the queue stays manageable.
+
+## 8. Replacing the sample data (important, before launch)
 
 The site ships with 12 sample parishes. Their names, dioceses and locations are
 real, but **Mass times, phone numbers, emails and clergy names are illustrative
@@ -117,7 +130,7 @@ placeholders** (fake addresses end in `.example`). Before going live:
 2. Delete or correct every sample entry you haven't verified —
    or use **Reset to sample** *only* if you want to start over from the samples.
 
-## 8. Safety notes
+## 9. Safety notes
 
 - Deleting a parish can't be undone (except by re-entering it or restoring a backup).
 - **Reset to sample** wipes *all* your edits and restores the original 12 samples —

@@ -2,6 +2,13 @@
 DirectoryIndex index.html
 Options -Indexes
 
+# Pretty URLs: crawlable per-parish pages and a live sitemap
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+  RewriteRule ^p/([a-z0-9-]{1,80})/?$ parish.php?id=$1 [L,QSA]
+</IfModule>
+
 # Long-lived caching for static assets; HTML and API responses stay fresh.
 <IfModule mod_expires.c>
   ExpiresActive On

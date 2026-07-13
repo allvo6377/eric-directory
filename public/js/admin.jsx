@@ -8,6 +8,16 @@ function AdminView({ navigate, parishes }) {
   const [importing, setImporting] = React.useState(false);
   const [autofilling, setAutofilling] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
+  const [pendingSuggestions, setPendingSuggestions] = React.useState(0);
+
+  const refreshSuggestionCount = React.useCallback(() => {
+    fetch("api/suggestions.php", { credentials: "same-origin" })
+      .then((r) => r.json())
+      .then((j) => setPendingSuggestions(((j && j.suggestions) || []).filter((s) => s.status === "new").length))
+      .catch(() => {});
+  }, []);
+  React.useEffect(refreshSuggestionCount, [refreshSuggestionCount]);
   const [confirmReset, setConfirmReset] = React.useState(false);
   const [toast, setToast] = React.useState(null);
   const [deleteTarget, setDeleteTarget] = React.useState(null);
@@ -69,6 +79,9 @@ function AdminView({ navigate, parishes }) {
             <p>Add, edit and import parish records, and edit the site's own text and images. Changes are saved on the server and appear instantly for every visitor.</p>
           </div>
           <div className="admin-hero-actions">
+            <button className="btn btn-ghost" onClick={() => setSuggestionsOpen(true)}>
+              <window.I.mail /> Suggestions{pendingSuggestions > 0 && <span className="sg-badge">{pendingSuggestions}</span>}
+            </button>
             <button className="btn btn-ghost" onClick={() => setSettingsOpen(true)}><window.I.gear /> Site settings</button>
             <button className="btn btn-ghost" onClick={() => setAutofilling(true)}><window.I.globe /> Auto-fill photos</button>
             <button className="btn btn-ghost" onClick={() => setImporting(true)}><window.I.upload /> Import CSV</button>
@@ -146,6 +159,7 @@ function AdminView({ navigate, parishes }) {
       {importing && <window.ImportModal onClose={onImportClose} />}
       {autofilling && <window.AutofillModal parishes={all} onClose={onAutofillClose} />}
       {settingsOpen && <window.SiteSettingsModal onClose={onSettingsClose} />}
+      {suggestionsOpen && <window.SuggestionsModal navigate={navigate} onClose={() => { setSuggestionsOpen(false); refreshSuggestionCount(); }} />}
 
       {deleteTarget && (
         <div className="modal-overlay" onMouseDown={() => setDeleteTarget(null)}>

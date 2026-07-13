@@ -17,7 +17,7 @@ function makeIcon(active) {
 function popupHTML(c) {
   const s = window.nextSunday(c.massTimes);
   const meta = [c.city, s ? "Sun " + s.time + (s.language ? " (" + s.language + ")" : "") : null].filter(Boolean).join(" · ");
-  const img = c.heroImage || c.images[0];
+  const img = window.thumbUrl(c.heroImage || c.images[0], 480);
   const imgHTML = img
     ? `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />`
     : `<div class="ph"><span>${c.gallery[0]}</span></div>`;

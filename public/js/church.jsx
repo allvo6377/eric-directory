@@ -32,6 +32,31 @@ function Frame({ id, src, label, className, admin }) {
 
 function ChurchPage({ church: c, navigate, admin }) {
   React.useEffect(() => { window.scrollTo(0, 0); }, [c.id]);
+  const [suggestOpen, setSuggestOpen] = React.useState(false);
+  const [shareMsg, setShareMsg] = React.useState("");
+
+  // per-parish browser title (bookmarks, history, tab bar)
+  React.useEffect(() => {
+    const site = window.SiteContent ? window.SiteContent.get() : {};
+    const prev = document.title;
+    document.title = c.name + " — " + (site.siteName || "Ecclesia Kenya");
+    return () => { document.title = prev; };
+  }, [c.id, c.name]);
+
+  // share the server-rendered page (/p/<id>) — it carries the real
+  // title/preview image when pasted into WhatsApp & friends
+  function share() {
+    const url = location.origin + "/p/" + c.id;
+    const data = { title: c.name, text: c.tagline || c.name, url };
+    if (navigator.share) {
+      navigator.share(data).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(
+        () => { setShareMsg("Link copied!"); setTimeout(() => setShareMsg(""), 2200); },
+        () => { setShareMsg(url); }
+      );
+    }
+  }
 
   const hasCoords = c.coords && typeof c.coords.lat === "number";
   const dirUrl = hasCoords ? `https://www.google.com/maps/dir/?api=1&destination=${c.coords.lat},${c.coords.lng}` : null;
@@ -191,7 +216,18 @@ function ChurchPage({ church: c, navigate, admin }) {
                 ? <a className="btn btn-primary" href={dirUrl} target="_blank" rel="noreferrer"><window.I.route /> Get directions</a>
                 : <button className="btn btn-ghost" disabled style={{ opacity: .55, cursor: "default" }}><window.I.pin /> Location not set</button>}
               {mapsUrl && <a className="btn btn-ghost" href={mapsUrl} target="_blank" rel="noreferrer"><window.I.pin /> View on map</a>}
+              <button className="btn btn-ghost" onClick={share}><window.I.globe /> {shareMsg || "Share this parish"}</button>
             </div>
+          </div>
+
+          <div className="side-card">
+            <h3>Something out of date?</h3>
+            <p className="muted" style={{ fontSize: 13.5, lineHeight: 1.6, margin: "0 0 12px" }}>
+              Mass times and contacts change. If you spot an error, let the directory team know.
+            </p>
+            <button className="btn btn-soft" style={{ width: "100%" }} onClick={() => setSuggestOpen(true)}>
+              <window.I.edit style={{ width: 15, height: 15 }} /> Suggest an update
+            </button>
           </div>
 
           <div className="side-card">
@@ -213,6 +249,8 @@ function ChurchPage({ church: c, navigate, admin }) {
           )}
         </aside>
       </div>
+
+      {suggestOpen && <window.SuggestModal church={c} onClose={() => setSuggestOpen(false)} />}
     </div>
   );
 }

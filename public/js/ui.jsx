@@ -66,10 +66,19 @@ function Slot({ id, src, label = "Drop an image", className = "", shape = "rect"
   return <div className={"slot-wrap " + className} style={style}>{React.createElement("image-slot", props)}</div>;
 }
 
+/* Wikimedia Commons serves any width on demand — ask for a small rendition for
+   card/search thumbnails instead of the full 1100–1400px hero (saves ~3 MB on
+   the directory page). Non-Commons URLs pass through untouched. */
+function thumbUrl(src, w) {
+  if (!src) return src;
+  const m = /^(https:\/\/commons\.wikimedia\.org\/wiki\/Special:FilePath\/[^?]+)\?width=\d+$/.exec(src);
+  return m ? m[1] + "?width=" + (w || 320) : src;
+}
+
 /* plain image with placeholder fallback (for small thumbnails/cards) */
-function Thumb({ src, label, className = "" }) {
-  if (src) return <img className={"thumb-img " + className} src={src} alt={label || ""} loading="lazy" />;
+function Thumb({ src, label, className = "", width = 320 }) {
+  if (src) return <img className={"thumb-img " + className} src={thumbUrl(src, width)} alt={label || ""} loading="lazy" />;
   return <PH label={label} className={className} />;
 }
 
-Object.assign(window, { I, PH, Slot, Thumb, haversine, nextSunday, initials, uniqueSorted });
+Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, haversine, nextSunday, initials, uniqueSorted });

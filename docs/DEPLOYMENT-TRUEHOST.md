@@ -74,12 +74,22 @@ when the site is served over HTTPS.
 
 | Check | Expect |
 |---|---|
-| `https://your-domain/` | Directory renders with sample parishes and the map |
-| `https://your-domain/api/parishes.php` | JSON (`{"ok":true,...}`) — auto-seeds on first hit |
-| `https://your-domain/data/parishes.json` | **403/404 Forbidden** (protected!) |
-| `https://your-domain/#admin` | Sign-in card; your password works |
+| `https://caap.or.ke/` | Directory renders with sample parishes and the map |
+| `https://caap.or.ke/api/parishes.php` | JSON (`{"ok":true,...}`) — auto-seeds on first hit |
+| `https://caap.or.ke/data/parishes.json` | **403/404 Forbidden** (protected!) |
+| `https://caap.or.ke/#admin` | Sign-in card; your password works |
+| `https://caap.or.ke/p/holy-family-basilica` | Server-rendered parish page (title, photo, Mass times) |
+| `https://caap.or.ke/sitemap.xml` | XML listing `/` and every `/p/…` parish page |
+| Paste a `/p/…` link into WhatsApp | Preview shows the parish name + photo |
 | Admin → add a test parish → view in another browser | The change is visible to everyone |
 | Admin → Site settings → change the headline | Homepage updates for everyone |
+
+**Then register with Google:** [Search Console](https://search.google.com/search-console)
+→ add property `caap.or.ke` → submit `https://caap.or.ke/sitemap.xml`. Parishes
+become findable for searches like *"Mass times Kangemi"* within days.
+
+> If the domain ever changes, update `CANONICAL_BASE` in `api/bootstrap.php`,
+> the OG/canonical tags in `index.html`, and the Sitemap line in `robots.txt`.
 
 If `data/parishes.json` is **downloadable**, your host is ignoring `.htaccess` —
 contact Truehost support to enable it, or move the data directory above the web

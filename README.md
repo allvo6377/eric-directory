@@ -11,19 +11,28 @@ Built from the high-fidelity design in the Claude Design project
 
 | | |
 |---|---|
-| Public site | `https://your-domain/` |
-| Hidden admin sign-in | `https://your-domain/#admin` *(no visible link — bookmark it)* |
-| One-time setup | `https://your-domain/api/setup.php` *(sets the admin password, then locks itself)* |
+| Public site | `https://caap.or.ke/` |
+| Per-parish share/SEO pages | `https://caap.or.ke/p/<parish-id>` *(server-rendered: real titles, OpenGraph previews, schema.org data)* |
+| Sitemap / robots | `https://caap.or.ke/sitemap.xml` · `/robots.txt` |
+| Hidden admin sign-in | `https://caap.or.ke/#admin` *(no visible link — bookmark it)* |
+| One-time setup | `https://caap.or.ke/api/setup.php` *(sets the admin password, then locks itself)* |
+
+> The canonical domain lives in one place: `CANONICAL_BASE` in `public/api/bootstrap.php`
+> (plus the static tags in `public/index.html` and `public/robots.txt`).
 
 ## Feature summary
 
 **Visitors**
-- Browse/search parishes with live typeahead (keyboard-navigable)
+- Browse/search parishes with instant typeahead (keyboard-navigable)
 - Filter by diocese and Mass language; sort by distance ("Nearest to me")
 - Interactive Leaflet map (CARTO tiles) synced with the result list
 - Browse by diocese/archdiocese with stats
 - Parish pages: Mass times, confessions/adoration, sacraments & ministries,
   photo gallery, clergy, events, contacts, office hours, mini-map, directions
+- **Share** any parish (WhatsApp-ready `/p/<id>` link with photo preview)
+- **Suggest an update** on any parish page — corrections go to a moderated
+  admin queue (honeypot + rate-limited, no accounts needed)
+- Mobile menu (hamburger) for phone-size screens
 
 **Admin (hidden behind `#admin`, server-side sessions)**
 - Add / edit / delete parishes (full-schema form)
@@ -87,8 +96,19 @@ php -S localhost:8080
 # open http://localhost:8080/#admin   → sign in
 ```
 
-Requires PHP 8.0+. No composer, no npm, no build step. (Node is only needed if you
-edit `js/data.js` and want to regenerate the seed: `node scripts/build-seed.js`.)
+Requires PHP 8.0+. No composer, no npm.
+
+**Editing the front-end:** production loads a precompiled bundle
+(`js/build/app.bundle.js`) so visitors never download Babel. After changing any
+`.jsx` file, rebuild it (uses the vendored Babel — no npm install):
+
+```bash
+node scripts/build-js.js
+```
+
+For build-free live editing, open `index-dev.html` instead — it compiles the raw
+`.jsx` in the browser exactly like the design prototype.
+(`node scripts/build-seed.js` regenerates the sample-data seed after editing `js/data.js`.)
 
 ## Security model (summary)
 

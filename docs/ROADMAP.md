@@ -9,10 +9,10 @@ Effort: **S** = hours, **M** = a few days, **L** = a week or more.
 
 | # | Suggestion | Why | Effort |
 |---|---|---|---|
-| 1 | **Precompile the JSX** (one-time `npx babel js --out-dir js-compiled` + swap the script tags) | Removes the 3 MB Babel-standalone download and in-browser compile — biggest single performance win, especially on 3G/4G. Keep the current setup for development; ship compiled JS | S |
+| 1 | ~~**Precompile the JSX**~~ ✅ **DONE** — `scripts/build-js.js` builds `js/build/app.bundle.js` (146 KB replaces 3 MB Babel); `index-dev.html` keeps the no-build dev flow | Biggest single performance win | — |
 | 2 | **Photo credits/attribution field** per image | Wikimedia Commons photos are CC-BY-SA — a small caption ("Photo: A. Author, CC BY-SA") displayed on the gallery satisfies the license cleanly | S |
-| 3 | **SEO & sharing tags** — per-parish `<title>`/OpenGraph via a tiny PHP router, `sitemap.xml` generated from parishes.json, `robots.txt` | Parishes become findable on Google ("Mass times Kangemi"), links preview nicely on WhatsApp — a major discovery channel in Kenya | M |
-| 4 | **"Suggest an update" button** on parish pages (public form → moderation queue in admin) | Crowdsources corrections (Mass time changes are frequent) without giving anyone edit rights; the admin approves/rejects | M |
+| 3 | ~~**SEO & sharing tags**~~ ✅ **DONE** — server-rendered `/p/<id>` pages with OG + schema.org CatholicChurch data, live `sitemap.xml`, `robots.txt`, canonical/OG on the homepage, Share button in the app | Parishes findable on Google; WhatsApp previews | — |
+| 4 | ~~**"Suggest an update" button**~~ ✅ **DONE** — public form (honeypot + rate limit) → admin Suggestions queue with resolve/delete | Crowdsourced corrections, no edit rights given away | — |
 | 5 | **Audit log** (`data/audit.log`: timestamp + action + parish id) | Cheap accountability and debugging for content changes | S |
 
 ## Product features

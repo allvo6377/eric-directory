@@ -26,6 +26,8 @@ function applyTheme(site) {
 
 function Topbar({ route, onNav, count, authed, site }) {
   const is = (r) => (route === r ? "nav-link active" : "nav-link");
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const go = (r) => (e) => { e.preventDefault(); setMenuOpen(false); onNav(r); };
   return (
     <header className="topbar">
       <div className="brand-bar" />
@@ -38,18 +40,32 @@ function Topbar({ route, onNav, count, authed, site }) {
           </div>
         </div>
         <nav className="nav-links">
-          <a className={is("")} href="#" onClick={(e) => { e.preventDefault(); onNav(""); }}>Directory</a>
-          <a className={is("map")} href="#map" onClick={(e) => { e.preventDefault(); onNav("map"); }}>Map</a>
-          <a className={is("dioceses")} href="#dioceses" onClick={(e) => { e.preventDefault(); onNav("dioceses"); }}>Dioceses</a>
+          <a className={is("")} href="#" onClick={go("")}>Directory</a>
+          <a className={is("map")} href="#map" onClick={go("map")}>Map</a>
+          <a className={is("dioceses")} href="#dioceses" onClick={go("dioceses")}>Dioceses</a>
           {authed && (
-            <a className={is("admin") + " nav-admin"} href="#admin" onClick={(e) => { e.preventDefault(); onNav("admin"); }}>
+            <a className={is("admin") + " nav-admin"} href="#admin" onClick={go("admin")}>
               <window.I.lock style={{ width: 14, height: 14 }} /> Admin
             </a>
           )}
         </nav>
         <div className="topbar-spacer" />
         <div className="topbar-count">{count} parishes listed</div>
+        <button className="nav-burger" aria-label="Open menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen
+            ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+            : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>}
+        </button>
       </div>
+      {menuOpen && (
+        <nav className="mobile-nav">
+          <a className={is("")} href="#" onClick={go("")}>Directory</a>
+          <a className={is("map")} href="#map" onClick={go("map")}>Map</a>
+          <a className={is("dioceses")} href="#dioceses" onClick={go("dioceses")}>Dioceses</a>
+          {authed && <a className={is("admin")} href="#admin" onClick={go("admin")}><window.I.lock style={{ width: 14, height: 14 }} /> Admin</a>}
+          <div className="mn-count">{count} parishes listed</div>
+        </nav>
+      )}
     </header>
   );
 }
