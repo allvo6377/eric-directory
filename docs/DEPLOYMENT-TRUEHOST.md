@@ -95,14 +95,54 @@ If `data/parishes.json` is **downloadable**, your host is ignoring `.htaccess` �
 contact Truehost support to enable it, or move the data directory above the web
 root (adjust `DATA_DIR` in `api/bootstrap.php`).
 
-## 8. Ongoing operations
+## 8. Deploying updates
+
+**Content updates need no deployment at all.** Parishes, site text, photos,
+colors — the admin edits them live at `/#admin` and they're stored on the
+server. Deployment only applies to **code** changes (files in this repository).
+
+### 8.1 The pre-deploy checklist (on your computer)
+
+1. Make the code change.
+2. If you touched any `.jsx` file → `node scripts/build-js.js`
+   (regenerates `public/js/build/app.bundle.js`).
+   If you touched `js/data.js` → `node scripts/build-seed.js`.
+3. **Bump the cache version** in `public/index.html`: change every `?v=2` to
+   `?v=3` (one search-and-replace). Static assets are browser-cached for 7
+   days; without the bump, returning visitors keep the old CSS/JS.
+4. Test locally: `cd public && php -S localhost:8080`.
+5. Commit and push to GitHub.
+
+### 8.2 Getting it onto Truehost — pick one
+
+**A. cPanel Git deployment (recommended — one-time setup, then two clicks).**
+cPanel → **Git™ Version Control** → *Create* → clone this repository (for a
+private repo, register the deploy key cPanel shows under GitHub → Settings →
+Deploy keys). From then on, after every push: open the repo in cPanel →
+**Update from Remote** → **Deploy HEAD Commit**. The bundled `.cpanel.yml`
+copies `public/` into `public_html` and **never touches** the live `data/`
+and `uploads/` folders.
+
+**B. Zip re-upload (no git on the server).**
+`cd public && zip -r ../site.zip . -x "data/*" "uploads/*"` → File Manager →
+upload into `public_html` → Extract → overwrite. The exclusions protect live
+content.
+
+**C. Single-file edits.**
+For a one-line fix, File Manager (or FTP) → replace just that file. Fine
+occasionally; easy to drift from the repo if it becomes a habit — always
+mirror the same change in git.
+
+**The one rule for all methods:** never overwrite `public_html/data/` or
+`public_html/uploads/` — that's the live database and photo store. (Method A
+and the zip exclusions in B enforce this for you.)
+
+## 8b. Ongoing operations
 
 - **Backups:** cPanel → File Manager → compress and download
   `public_html/data` and `public_html/uploads` (that's the entire live state);
   or use cPanel's **Backup** tool. Do this after any big content session, and at
   least monthly. Truehost's own backups exist, but keep your own copy.
-- **Updating the code:** re-upload changed files from `public/` (never overwrite
-  `data/` or `uploads/` on the server — they hold live content).
 - **Password change:** Admin → Site settings → *Admin password* section.
 - **Disk usage:** uploads are auto-compressed to ≤1600px WebP (~100–300 KB each),
   so even hundreds of photos stay small.

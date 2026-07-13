@@ -1,0 +1,17 @@
+---
+# cPanel Git™ Version Control deployment (Truehost supports this).
+#
+# One-time setup in cPanel → "Git™ Version Control":
+#   1. Create → clone this repository (use the HTTPS URL; for a private repo,
+#      add the SSH deploy key cPanel generates to GitHub → repo → Deploy keys).
+#   2. After any push to GitHub: open the repo in cPanel → Pull or Deploy →
+#      "Update from Remote", then "Deploy HEAD Commit". That runs the task
+#      below, which copies public/ into public_html.
+#
+# Live content is NEVER touched: data/ (parish + site JSON, admin hash) and
+# uploads/ (admin photos) are excluded, so a deploy can't overwrite what the
+# admin has edited on the server.
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html
+    - /usr/bin/rsync -a --exclude 'data/' --exclude 'uploads/' --exclude '.well-known/' public/ $DEPLOYPATH/
