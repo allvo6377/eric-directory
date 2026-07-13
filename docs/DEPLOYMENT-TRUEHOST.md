@@ -116,12 +116,27 @@ server. Deployment only applies to **code** changes (files in this repository).
 ### 8.2 Getting it onto Truehost — pick one
 
 **A. cPanel Git deployment (recommended — one-time setup, then two clicks).**
-cPanel → **Git™ Version Control** → *Create* → clone this repository (for a
-private repo, register the deploy key cPanel shows under GitHub → Settings →
-Deploy keys). From then on, after every push: open the repo in cPanel →
-**Update from Remote** → **Deploy HEAD Commit**. The bundled `.cpanel.yml`
-copies `public/` into `public_html` and **never touches** the live `data/`
-and `uploads/` folders.
+
+One-time setup (exact values for this project):
+
+1. cPanel → **Git™ Version Control** → **Create**.
+2. Turn ON *Clone a Repository* and enter:
+   - **Clone URL:** `https://github.com/allvo6377/eric-directory.git`
+     (the repo is public — no deploy key or password needed)
+   - **Repository Path:** `repositories/eric-directory` (cPanel prefixes your home dir)
+   - **Repository Name:** `eric-directory`
+3. **Create.** cPanel clones the repo and checks out the default branch —
+   make sure it is on **`main`** (Manage → Checked-Out Branch → `main`).
+   `main` is the stable deploy branch; day-to-day work happens on feature
+   branches and is merged into `main` only when it's ready to go live.
+
+Deploying after that, every time:
+
+1. cPanel → Git™ Version Control → **Manage** next to `eric-directory`.
+2. **Pull or Deploy** tab → **Update from Remote** (fetches the latest `main`).
+3. **Deploy HEAD Commit** — this runs the bundled `.cpanel.yml`, which rsyncs
+   `public/` into `public_html` and **never touches** the live `data/` and
+   `uploads/` folders.
 
 **B. Zip re-upload (no git on the server).**
 `cd public && zip -r ../site.zip . -x "data/*" "uploads/*"` → File Manager →
