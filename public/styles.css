@@ -141,6 +141,10 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
 .toolbar {
   max-width: var(--maxw); margin: 22px auto 0; padding: 0 28px;
   display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+  /* The entrance animations (fill-mode: both) leave the toolbar and the result
+     cards in sibling stacking contexts, letting cards paint over the search
+     dropdown. Lift the toolbar's context so the dropdown always stays on top. */
+  position: relative; z-index: 30;
 }
 .search {
   position: relative; flex: 1 1 340px; min-width: 260px;

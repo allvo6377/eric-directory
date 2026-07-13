@@ -93,12 +93,12 @@ function AdminView({ navigate, parishes }) {
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search parishes…" />
           </div>
           <div className="select-wrap">
-            <select value={dioFilter} onChange={(e) => setDioFilter(e.target.value)}>
+            <select value={dioFilter} onChange={(e) => setDioFilter(e.target.value)} aria-label="Filter by diocese">
               {dioceses.map((dd) => <option key={dd}>{dd === "All" ? "All dioceses" : dd}</option>)}
             </select><span className="chev"><window.I.chev /></span>
           </div>
           <div className="select-wrap">
-            <select value={srcFilter} onChange={(e) => setSrcFilter(e.target.value)}>
+            <select value={srcFilter} onChange={(e) => setSrcFilter(e.target.value)} aria-label="Filter by record source">
               {["All", "Sample", "Imported", "Manual"].map((x) => <option key={x}>{x === "All" ? "All sources" : x}</option>)}
             </select><span className="chev"><window.I.chev /></span>
           </div>
@@ -119,7 +119,7 @@ function AdminView({ navigate, parishes }) {
             <tbody>
               {filtered.map((c) => (
                 <tr key={c.id}>
-                  <td className="pt-name"><a onClick={() => navigate(c.id)}>{c.name}</a></td>
+                  <td className="pt-name"><a href={"#" + c.id} onClick={(e) => { e.preventDefault(); navigate(c.id); }}>{c.name}</a></td>
                   <td><span className="mini-chip">{c.type}</span></td>
                   <td className="pt-dim">{c.diocese}</td>
                   <td>{[c.city, c.county].filter(Boolean).join(", ") || "—"}</td>

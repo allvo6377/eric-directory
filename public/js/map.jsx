@@ -55,8 +55,13 @@ function DirectoryMap({ churches, activeId, onSelect, onOpen, userLoc }) {
       attribution: '&copy; OpenStreetMap &copy; CARTO',
     }).addTo(map);
     mapRef.current = map;
-    setTimeout(() => map.invalidateSize(), 100);
-    return () => { map.remove(); mapRef.current = null; };
+    const sizeTimer = setTimeout(() => map.invalidateSize(), 100);
+    return () => {
+      clearTimeout(sizeTimer);
+      try { map.stop(); } catch (e) {}  // cancel in-flight pan/zoom animations
+      map.remove();
+      mapRef.current = null;
+    };
   }, []);
 
   // rebuild markers when church set changes
@@ -77,8 +82,10 @@ function DirectoryMap({ churches, activeId, onSelect, onOpen, userLoc }) {
       markersRef.current[c.id] = m;
       bounds.push([c.coords.lat, c.coords.lng]);
     });
-    if (bounds.length > 1) map.fitBounds(bounds, { padding: [44, 44], maxZoom: 11 });
-    else if (bounds.length === 1) map.setView(bounds[0], 13);
+    // animate:false — an animated initial fit can outlive the map when the
+    // user navigates away immediately (Leaflet "_leaflet_pos" crash)
+    if (bounds.length > 1) map.fitBounds(bounds, { padding: [44, 44], maxZoom: 11, animate: false });
+    else if (bounds.length === 1) map.setView(bounds[0], 13, { animate: false });
     // eslint-disable-next-line
   }, [churches.map((c) => c.id).join(",")]);
 
@@ -105,8 +112,10 @@ function DirectoryMap({ churches, activeId, onSelect, onOpen, userLoc }) {
     const map = mapRef.current;
     if (map && activeId && markersRef.current[activeId]) {
       const m = markersRef.current[activeId];
-      map.panTo(m.getLatLng(), { animate: true, duration: 0.4 });
-      m.openPopup();
+      try {
+        map.panTo(m.getLatLng(), { animate: true, duration: 0.4 });
+        m.openPopup();
+      } catch (e) { /* map mid-teardown during fast navigation */ }
     }
   }, [activeId]);
 
@@ -124,8 +133,12 @@ function MiniMap({ church }) {
     });
     L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", { maxZoom: 19 }).addTo(map);
     L.marker([church.coords.lat, church.coords.lng], { icon: makeIcon(true) }).addTo(map);
-    setTimeout(() => map.invalidateSize(), 120);
-    return () => map.remove();
+    const sizeTimer = setTimeout(() => map.invalidateSize(), 120);
+    return () => {
+      clearTimeout(sizeTimer);
+      try { map.stop(); } catch (e) {}
+      map.remove();
+    };
   }, [church.id]);
   return <div ref={elRef} style={{ width: "100%", height: "100%" }} />;
 }

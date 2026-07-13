@@ -8,38 +8,29 @@ function highlight(text, q) {
   return [text.slice(0, i), <mark key="m">{text.slice(i, i + q.length)}</mark>, text.slice(i + q.length)];
 }
 
-/* ---------- Live (AJAX-style) typeahead search ---------- */
+/* ---------- Live typeahead search ---------- */
 function LiveSearch({ all, query, setQuery, onPick }) {
   const [focused, setFocused] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [results, setResults] = React.useState([]);
   const [kbd, setKbd] = React.useState(0);
-  const timer = React.useRef(null);
   const q = query.trim();
 
-  // simulate an async fetch: debounce + latency + loading state
-  React.useEffect(() => {
-    if (!q) {setResults([]);setLoading(false);clearTimeout(timer.current);return;}
-    setLoading(true);
-    clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      const ql = q.toLowerCase();
-      const matches = all.
-      map((c) => {
-        const hay = (c.name + " " + c.city + " " + c.diocese + " " + c.county + " " + c.patron).toLowerCase();
-        const idx = hay.indexOf(ql);
-        return idx < 0 ? null : { c, score: c.name.toLowerCase().indexOf(ql) >= 0 ? idx : idx + 100 };
-      }).
-      filter(Boolean).
-      sort((a, b) => a.score - b.score).
-      slice(0, 6).
-      map((x) => x.c);
-      setResults(matches);
-      setKbd(0);
-      setLoading(false);
-    }, 260 + Math.random() * 160);
-    return () => clearTimeout(timer.current);
+  // the parish list is already in memory — results are computed instantly
+  const results = React.useMemo(() => {
+    if (!q) return [];
+    const ql = q.toLowerCase();
+    return all.
+    map((c) => {
+      const hay = (c.name + " " + c.city + " " + c.diocese + " " + c.county + " " + c.patron).toLowerCase();
+      const idx = hay.indexOf(ql);
+      return idx < 0 ? null : { c, score: c.name.toLowerCase().indexOf(ql) >= 0 ? idx : idx + 100 };
+    }).
+    filter(Boolean).
+    sort((a, b) => a.score - b.score).
+    slice(0, 6).
+    map((x) => x.c);
   }, [q, all]);
+
+  React.useEffect(() => { setKbd(0); }, [q]);
 
   const open = focused && q.length > 0;
 
@@ -63,8 +54,7 @@ function LiveSearch({ all, query, setQuery, onPick }) {
         onKeyDown={onKeyDown}
         placeholder="Search by parish, town or diocese…" />
 
-      {loading && <span className="s-spin"><span className="spinner" /></span>}
-      {!loading && query &&
+      {query &&
       <button className="s-clear" onMouseDown={(e) => {e.preventDefault();setQuery("");}} aria-label="Clear">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>
@@ -72,20 +62,7 @@ function LiveSearch({ all, query, setQuery, onPick }) {
 
       {open &&
       <div className="search-dropdown">
-          {loading ?
-        <React.Fragment>
-              <div className="sd-head"><span>Searching…</span></div>
-              {[0, 1, 2].map((i) =>
-          <div className="sd-row" key={i} style={{ pointerEvents: "none" }}>
-                  <div className="sd-ic skel" />
-                  <div className="sd-main">
-                    <div className="skel" style={{ height: 13, width: "62%", marginBottom: 7 }} />
-                    <div className="skel" style={{ height: 10, width: "40%" }} />
-                  </div>
-                </div>
-          )}
-            </React.Fragment> :
-        results.length === 0 ?
+          {results.length === 0 ?
         <div className="sd-empty">No parishes match “<b>{q}</b>”.</div> :
 
         <React.Fragment>
@@ -122,7 +99,7 @@ function LiveSearch({ all, query, setQuery, onPick }) {
 
 }
 
-function ChurchCard({ c, active, onHover, onSelect, onOpen, dist, cardStyle, index }) {
+function ChurchCard({ c, active, onHover, onOpen, dist, cardStyle, index }) {
   const s = window.nextSunday(c.massTimes);
   const langs = window.uniqueSorted(c.massTimes.map((m) => m.language).filter(Boolean)).slice(0, 3);
   return (
@@ -130,8 +107,7 @@ function ChurchCard({ c, active, onHover, onSelect, onOpen, dist, cardStyle, ind
       className={"ch-card " + (active ? "active " : "") + (cardStyle === "soft" ? "softshadow" : "")}
       style={{ "--i": index }}
       onMouseEnter={() => onHover(c.id)}
-      onClick={() => onSelect(c.id)}
-      onDoubleClick={() => onOpen(c.id)}>
+      onClick={() => onOpen(c.id)}>
 
       <div className="ch-thumb"><window.Thumb src={c.heroImage || c.images[0]} label={c.gallery[0]} /></div>
       <div className="ch-main">
@@ -193,9 +169,15 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
     setGeoState("locating");
     const fallback = { lat: -1.28637, lng: 36.81724 }; // Nairobi CBD
     if (!navigator.geolocation) {setUserLoc(fallback);setGeoState("fallback");return;}
+    // Browsers only start the geolocation timeout AFTER the permission prompt
+    // is answered — if the user ignores the prompt, no callback ever fires.
+    // Race our own timer so "Locating…" can never hang forever.
+    let settled = false;
+    const settle = (loc, state) => { if (settled) return; settled = true; setUserLoc(loc); setGeoState(state); };
+    const guard = setTimeout(() => settle(fallback, "fallback"), 8000);
     navigator.geolocation.getCurrentPosition(
-      (pos) => {setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });setGeoState("ok");},
-      () => {setUserLoc(fallback);setGeoState("fallback");},
+      (pos) => { clearTimeout(guard); settle({ lat: pos.coords.latitude, lng: pos.coords.longitude }, "ok"); },
+      () => { clearTimeout(guard); settle(fallback, "fallback"); },
       { timeout: 6000 }
     );
   }
@@ -225,13 +207,13 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
         <LiveSearch all={all} query={query} setQuery={setQuery} onPick={navigate} />
         <div className="filter-group">
           <div className="select-wrap">
-            <select value={diocese} onChange={(e) => setDiocese(e.target.value)}>
+            <select value={diocese} onChange={(e) => setDiocese(e.target.value)} aria-label="Filter by diocese">
               {dioceses.map((d) => <option key={d} value={d}>{d === "All" ? "All dioceses" : d}</option>)}
             </select>
             <span className="chev"><window.I.chev /></span>
           </div>
           <div className="select-wrap">
-            <select value={lang} onChange={(e) => setLang(e.target.value)}>
+            <select value={lang} onChange={(e) => setLang(e.target.value)} aria-label="Filter by Mass language">
               {languages.map((l) => <option key={l} value={l}>{l === "All" ? "Any language" : "Mass in " + l}</option>)}
             </select>
             <span className="chev"><window.I.chev /></span>
@@ -254,11 +236,11 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
             }
             {filtered.map((c, i) =>
             <ChurchCard key={c.id} c={c} active={c.id === activeId} index={i}
-            onHover={setActiveId} onSelect={setActiveId} onOpen={navigate}
+            onHover={setActiveId} onOpen={navigate}
             dist={nearest ? distOf(c) : null} cardStyle={tweaks.cardStyle} />
             )}
           </div>
-          <p className="muted" style={{ fontSize: 12.5, marginTop: 14 }}>Tip: click a parish to locate it on the map · double-click or “View parish” to open its page.</p>
+          <p className="muted" style={{ fontSize: 12.5, marginTop: 14 }}>Tip: hover a parish to highlight it on the map · click to open its page.</p>
         </div>
 
         <div className="map-col">

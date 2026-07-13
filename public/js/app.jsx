@@ -38,11 +38,11 @@ function Topbar({ route, onNav, count, authed, site }) {
           </div>
         </div>
         <nav className="nav-links">
-          <a className={is("")} onClick={() => onNav("")}>Directory</a>
-          <a className={is("map")} onClick={() => onNav("map")}>Map</a>
-          <a className={is("dioceses")} onClick={() => onNav("dioceses")}>Dioceses</a>
+          <a className={is("")} href="#" onClick={(e) => { e.preventDefault(); onNav(""); }}>Directory</a>
+          <a className={is("map")} href="#map" onClick={(e) => { e.preventDefault(); onNav("map"); }}>Map</a>
+          <a className={is("dioceses")} href="#dioceses" onClick={(e) => { e.preventDefault(); onNav("dioceses"); }}>Dioceses</a>
           {authed && (
-            <a className={is("admin") + " nav-admin"} onClick={() => onNav("admin")}>
+            <a className={is("admin") + " nav-admin"} href="#admin" onClick={(e) => { e.preventDefault(); onNav("admin"); }}>
               <window.I.lock style={{ width: 14, height: 14 }} /> Admin
             </a>
           )}
@@ -118,7 +118,7 @@ function App() {
           </div>
           <div className="f-note">{site.footerNote || "A directory of Catholic parishes, cathedrals and shrines across the dioceses of Kenya."}</div>
           {authed && (
-            <a className="f-admin" onClick={() => navigate("admin")}><window.I.gear style={{ width: 14, height: 14 }} /> Parish administration</a>
+            <a className="f-admin" href="#admin" onClick={(e) => { e.preventDefault(); navigate("admin"); }}><window.I.gear style={{ width: 14, height: 14 }} /> Parish administration</a>
           )}
         </div>
       </footer>
