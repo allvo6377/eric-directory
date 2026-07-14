@@ -2,9 +2,35 @@
 DirectoryIndex index.html
 Options -Indexes
 
-# Pretty URLs: crawlable per-parish pages and a live sitemap
 <IfModule mod_rewrite.c>
   RewriteEngine On
+
+  # ---- Canonical domain + HTTPS ----------------------------------------
+  # The site has one true address: https://caap.or.ke. Any other domain or
+  # subdomain pointed at this hosting (www.caap.or.ke, an old/secondary
+  # domain, http://…) is 301-redirected there in a single hop. This keeps
+  # Google from seeing duplicate sites and matches the canonical/OG tags,
+  # sitemap and share links, which all use caap.or.ke.
+  #
+  # The /.well-known/ exclusion lets cPanel AutoSSL (Let's Encrypt) validate
+  # certificates for every domain — without it, SSL renewal would be
+  # redirected away and fail. Change "caap.or.ke" here (both lines) if the
+  # canonical domain ever changes; also update CANONICAL_BASE in
+  # api/bootstrap.php and the tags in index.html / robots.txt.
+
+  # 1. Force HTTPS (any host that arrived over plain http)
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP_HOST} !=localhost
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule ^ https://caap.or.ke%{REQUEST_URI} [L,R=301]
+
+  # 2. Force the canonical host (any domain/subdomain that isn't caap.or.ke)
+  RewriteCond %{HTTP_HOST} !^caap\.or\.ke$ [NC]
+  RewriteCond %{HTTP_HOST} !=localhost
+  RewriteCond %{REQUEST_URI} !^/\.well-known/
+  RewriteRule ^ https://caap.or.ke%{REQUEST_URI} [L,R=301]
+
+  # ---- Pretty URLs: crawlable per-parish pages and a live sitemap ------
   RewriteRule ^sitemap\.xml$ sitemap.php [L]
   RewriteRule ^p/([a-z0-9-]{1,80})/?$ parish.php?id=$1 [L,QSA]
 </IfModule>

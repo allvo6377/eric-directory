@@ -95,6 +95,75 @@ If `data/parishes.json` is **downloadable**, your host is ignoring `.htaccess` �
 contact Truehost support to enable it, or move the data directory above the web
 root (adjust `DATA_DIR` in `api/bootstrap.php`).
 
+## 7b. Multiple domains → one canonical site (caap.or.ke)
+
+If you own several domains (a secondary domain, a `.com` as well as the
+`.or.ke`, `www`, an old name…) and want them all to land on **one** site,
+there are two halves: **cPanel** (make the domains reach this hosting) and the
+**`.htaccess`** (redirect them to the canonical address). The redirect is
+already built into `public/.htaccess` — you only need the cPanel half.
+
+### The important cPanel choice: Alias, not Addon
+
+When you attach an extra domain in cPanel you pick a type, and it matters:
+
+| Type | Document root | Use it when |
+|---|---|---|
+| **Alias** (a.k.a. *Parked domain*) | **Same** `public_html` as the main site | ✅ You want the domain to **redirect to caap.or.ke**. It hits the main `.htaccess`, so the redirect below just works. **This is what you want.** |
+| **Addon domain** | A **separate** subfolder (e.g. `public_html/otherdomain.com/`) | You want that domain to host a *different* site. It does **not** hit the main `.htaccess`, so the redirect won't fire unless you add a redirect in its own folder. |
+
+**So: add every funnel-to-caap domain as an _Alias_** — cPanel → **Aliases**
+(older cPanel: *Parked Domains*) → type the domain → **Add Domain**. Point the
+domain's nameservers/DNS at Truehost first if it isn't already.
+
+### Then: SSL for every domain (one-time, required)
+
+A browser visiting `https://otherdomain.com` completes the TLS handshake
+**before** any redirect runs, so each domain needs its own certificate or the
+redirect is never reached. cPanel → **SSL/TLS Status** → tick **all** domains →
+**Run AutoSSL**. Wait for every row to go green. (The `.htaccess` deliberately
+excludes `/.well-known/` so AutoSSL validation is never redirected away.)
+
+### What the redirect does (already in `.htaccess`)
+
+Once the domains are Aliases with SSL, `public/.htaccess` sends everything to
+`https://caap.or.ke` in a single 301 hop:
+
+- `http://caap.or.ke/…` → `https://caap.or.ke/…` (forces HTTPS)
+- `http(s)://www.caap.or.ke/…` → `https://caap.or.ke/…`
+- `http(s)://any-other-domain.com/foo` → `https://caap.or.ke/foo` (path kept)
+- `https://caap.or.ke/…` → served (no redirect)
+
+301 = "permanent", so Google transfers ranking to the canonical domain and
+stops indexing the duplicates.
+
+### If a domain is already an Addon (separate folder)
+
+Either remove it and re-add it as an Alias, **or** drop a one-line
+`.htaccess` into its folder (`public_html/otherdomain.com/.htaccess`):
+
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/\.well-known/
+RewriteRule ^ https://caap.or.ke%{REQUEST_URI} [L,R=301]
+```
+
+### Changing the canonical domain later
+
+If caap.or.ke is ever replaced, update the domain in **four** places:
+`public/.htaccess` (two `caap.or.ke` lines), `CANONICAL_BASE` in
+`api/bootstrap.php`, the `<link rel="canonical">`/`og:*` tags in
+`index.html`, and the `Sitemap:` line in `robots.txt`.
+
+### Verify
+
+| Try in a browser | Expect |
+|---|---|
+| `http://caap.or.ke` | jumps to `https://caap.or.ke` |
+| `https://www.caap.or.ke` | jumps to `https://caap.or.ke` |
+| `https://<secondary-domain>/p/holy-family-basilica` | jumps to `https://caap.or.ke/p/holy-family-basilica` |
+| Browser padlock on every domain | valid (AutoSSL done) |
+
 ## 8. Deploying updates
 
 **Content updates need no deployment at all.** Parishes, site text, photos,
