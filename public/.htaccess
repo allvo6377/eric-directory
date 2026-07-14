@@ -51,8 +51,17 @@ Options -Indexes
   AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json text/csv
 </IfModule>
 
-# Basic hardening
+# Security headers
 <IfModule mod_headers.c>
   Header set X-Content-Type-Options "nosniff"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
+  # Clickjacking: the site is never meant to be framed by others
+  Header set X-Frame-Options "SAMEORIGIN"
+  # Drop powerful features the site doesn't use (geolocation IS used, so keep it self)
+  Header set Permissions-Policy "geolocation=(self), camera=(), microphone=(), payment=()"
+  # Content Security Policy — scripts may only come from this origin (blocks
+  # injected inline/3rd-party JS), plus the exact third parties the app needs:
+  #   style/font  → Google Fonts   img → map tiles, Wikimedia, uploads, data-URIs
+  #   connect     → Wikimedia Commons image-search API (everything else is same-origin)
+  Header set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://commons.wikimedia.org; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>

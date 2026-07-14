@@ -636,20 +636,27 @@ function makeIcon(active) {
     popupAnchor: [0, -26]
   });
 }
+
+/* escape any value interpolated into the popup's raw HTML string — parish
+   fields (name, diocese, …) are admin/CSV-supplied, so treat them as untrusted
+   to prevent stored XSS in the Leaflet popup. */
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
 function popupHTML(c) {
   const s = window.nextSunday(c.massTimes);
   const meta = [c.city, s ? "Sun " + s.time + (s.language ? " (" + s.language + ")" : "") : null].filter(Boolean).join(" · ");
   const real = c.heroImage || c.images[0];
   const img = real ? window.thumbUrl(real, 480) : window.churchArtURI(c.type);
-  const imgHTML = `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />`;
+  const imgHTML = `<img src="${esc(img)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />`;
   return `
     <div class="pop">
       <div class="pop-img">${imgHTML}</div>
       <div class="pop-body">
-        <div class="pop-dio">${c.diocese}</div>
-        <h4>${c.name}</h4>
-        <div class="pop-meta">${meta || c.type}</div>
-        <a class="pop-btn" data-open="${c.id}" href="#${c.id}">View parish</a>
+        <div class="pop-dio">${esc(c.diocese)}</div>
+        <h4>${esc(c.name)}</h4>
+        <div class="pop-meta">${esc(meta || c.type)}</div>
+        <a class="pop-btn" data-open="${esc(c.id)}" href="#${esc(c.id)}">View parish</a>
       </div>
     </div>`;
 }

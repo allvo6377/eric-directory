@@ -23,6 +23,9 @@ if (preg_match('/^[a-z0-9-]{1,80}$/', (string)$id)) {
 $site = load_json_file(data_path('site.json'), []);
 $siteName = is_array($site) && !empty($site['siteName']) ? $site['siteName'] : 'Ecclesia Kenya';
 $logo = is_array($site) && !empty($site['logoUrl']) ? $site['logoUrl'] : 'assets/logo.jpg';
+// a site-relative logo needs a leading slash here (this page lives at /p/<id>);
+// an absolute http(s) logo is used as-is.
+$logoSrc = preg_match('#^https?://#i', $logo) ? $logo : '/' . ltrim($logo, '/');
 
 function h(?string $s): string { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 
@@ -83,7 +86,7 @@ header('Content-Type: text/html; charset=utf-8');
   <title><?= h($name) ?> — Mass Times &amp; Contacts | <?= h($siteName) ?></title>
   <meta name="description" content="<?= h($desc) ?>" />
   <link rel="canonical" href="<?= h($pageUrl) ?>" />
-  <link rel="icon" type="image/jpeg" href="/<?= h(ltrim($logo, '/')) ?>" />
+  <link rel="icon" type="image/jpeg" href="<?= h($logoSrc) ?>" />
   <meta name="theme-color" content="#1462b8" />
 
   <meta property="og:type" content="website" />
@@ -99,7 +102,7 @@ header('Content-Type: text/html; charset=utf-8');
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/styles.css?v=6" />
   <style>
     .sp-wrap { max-width: 760px; margin: 0 auto; padding: 28px 24px 64px; }
     .sp-hero { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: var(--bg-sink); margin: 18px 0 26px; }
@@ -117,7 +120,7 @@ header('Content-Type: text/html; charset=utf-8');
       <div class="brand-bar"></div>
       <div class="topbar-inner">
         <a class="brand" href="/" style="text-decoration:none">
-          <div class="brand-mark"><img src="/<?= h(ltrim($logo, '/')) ?>" alt="<?= h($siteName) ?> logo" /></div>
+          <div class="brand-mark"><img src="<?= h($logoSrc) ?>" alt="<?= h($siteName) ?> logo" /></div>
           <div class="brand-text">
             <div class="t1"><?= h($siteName) ?></div>
             <div class="t2">Catholic Parish Directory</div>
