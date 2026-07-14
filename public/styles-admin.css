@@ -109,7 +109,11 @@
 .modal {
   background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
   width: 100%; max-width: 760px; display: flex; flex-direction: column; overflow: hidden;
-  animation: modalIn .22s cubic-bezier(.22,.7,.3,1) both; margin: auto;
+  animation: modalIn .22s cubic-bezier(.22,.7,.3,1) both;
+  /* horizontal-only auto margins — `margin: auto` in the flex overlay would
+     also absorb vertical space and center the modal, so a tall modal opened
+     below the fold and you had to scroll up to reach its header. */
+  margin: 0 auto;
 }
 @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
 .modal-import { max-width: 880px; }

@@ -24,7 +24,7 @@ function applyTheme(site) {
   r.style.setProperty("--serif", `"${font}", Georgia, serif`);
 }
 
-function Topbar({ route, onNav, count, authed, site }) {
+function Topbar({ route, onNav, count, site }) {
   const is = (r) => (route === r ? "nav-link active" : "nav-link");
   const [menuOpen, setMenuOpen] = React.useState(false);
   const go = (r) => (e) => { e.preventDefault(); setMenuOpen(false); onNav(r); };
@@ -43,11 +43,6 @@ function Topbar({ route, onNav, count, authed, site }) {
           <a className={is("")} href="#" onClick={go("")}>Directory</a>
           <a className={is("map")} href="#map" onClick={go("map")}>Map</a>
           <a className={is("dioceses")} href="#dioceses" onClick={go("dioceses")}>Dioceses</a>
-          {authed && (
-            <a className={is("admin") + " nav-admin"} href="#admin" onClick={go("admin")}>
-              <window.I.lock style={{ width: 14, height: 14 }} /> Admin
-            </a>
-          )}
         </nav>
         <div className="topbar-spacer" />
         <div className="topbar-count">{count} parishes listed</div>
@@ -62,7 +57,6 @@ function Topbar({ route, onNav, count, authed, site }) {
           <a className={is("")} href="#" onClick={go("")}>Directory</a>
           <a className={is("map")} href="#map" onClick={go("map")}>Map</a>
           <a className={is("dioceses")} href="#dioceses" onClick={go("dioceses")}>Dioceses</a>
-          {authed && <a className={is("admin")} href="#admin" onClick={go("admin")}><window.I.lock style={{ width: 14, height: 14 }} /> Admin</a>}
           <div className="mn-count">{count} parishes listed</div>
         </nav>
       )}
@@ -120,7 +114,7 @@ function App() {
 
   return (
     <div className="app">
-      <Topbar route={church ? "" : route} onNav={navigate} count={parishes.length} authed={authed} site={site} />
+      <Topbar route={church ? "" : route} onNav={navigate} count={parishes.length} site={site} />
       <main style={{ flex: 1 }}>
         <div className="view-anim" key={route || "home"}>
           {body}
@@ -133,9 +127,6 @@ function App() {
             <div className="brand-text"><div className="t1" style={{ fontSize: 16 }}>{site.siteName || "Ecclesia Kenya"}</div></div>
           </div>
           <div className="f-note">{site.footerNote || "A directory of Catholic parishes, cathedrals and shrines across the dioceses of Kenya."}</div>
-          {authed && (
-            <a className="f-admin" href="#admin" onClick={(e) => { e.preventDefault(); navigate("admin"); }}><window.I.gear style={{ width: 14, height: 14 }} /> Parish administration</a>
-          )}
         </div>
       </footer>
     </div>

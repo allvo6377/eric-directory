@@ -469,6 +469,41 @@ image-slot { display: block; width: 100%; height: 100%; }
 .foot-inner { max-width: var(--maxw); margin: 0 auto; padding: 32px 28px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; }
 .foot-inner .f-note { font-size: 12.5px; color: var(--ink-4); max-width: 60ch; }
 
+/* ---------- inline click-to-edit (admin) ---------- */
+.admin-edit-hint {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 8px 0 2px; padding: 9px 14px; border-radius: var(--radius-sm);
+  background: var(--primary-soft); color: var(--primary);
+  font-size: 13px; font-weight: 600;
+}
+.admin-edit-hint a { text-decoration: underline; }
+.inline-editable {
+  cursor: text; border-radius: 5px;
+  transition: background .12s, box-shadow .12s;
+  outline: none;
+}
+.inline-editable:hover, .inline-editable:focus-visible {
+  background: rgba(20, 98, 184, 0.06);
+  box-shadow: 0 0 0 4px rgba(20, 98, 184, 0.06);
+}
+.inline-empty { color: var(--ink-4); font-style: italic; font-weight: 400; }
+.inline-edit-field {
+  font: inherit; color: var(--ink); width: 100%;
+  border: 1px solid var(--primary); border-radius: 7px;
+  padding: 6px 10px; background: var(--bg);
+  box-shadow: 0 0 0 3px var(--primary-soft); outline: none;
+}
+textarea.inline-edit-field { line-height: 1.6; resize: vertical; }
+/* hero name sits on a dark image — keep the editor legible there */
+.cp-hero-overlay .inline-editable:hover, .cp-hero-overlay .inline-editable:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.14);
+}
+.cp-hero-overlay .inline-edit-field {
+  color: var(--ink); background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
 /* sample-data banner */
 .databanner {
   background: var(--primary-tint); border-bottom: 1px solid var(--line);

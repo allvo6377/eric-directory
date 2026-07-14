@@ -33,6 +33,7 @@ const FILES = [
   "admin-form.jsx",
   "admin-import.jsx",
   "admin-autofill.jsx",
+  "admin-locate.jsx",
   "admin-settings.jsx",
   "admin-suggestions.jsx",
   "admin-login.jsx",

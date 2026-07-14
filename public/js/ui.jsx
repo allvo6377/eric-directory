@@ -81,4 +81,50 @@ function Thumb({ src, label, className = "", width = 320 }) {
   return <PH label={label} className={className} />;
 }
 
-Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, haversine, nextSunday, initials, uniqueSorted });
+/* click-to-edit text: for admins, the text becomes editable in place (click →
+   input/textarea → save on blur or Enter, Esc cancels). For visitors it renders
+   as a plain element. `tag` is the wrapper element for the read view. */
+function EditableText({ value, onSave, admin, tag = "div", className = "", multiline = false, placeholder = "Click to add…", style }) {
+  const [editing, setEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState(value || "");
+  React.useEffect(() => { if (!editing) setDraft(value || ""); }, [value, editing]);
+
+  if (!admin) {
+    return React.createElement(tag, { className, style }, value);
+  }
+
+  function commit() {
+    setEditing(false);
+    const v = draft.trim();
+    if (v !== (value || "").trim()) onSave(v);
+  }
+  function cancel() { setEditing(false); setDraft(value || ""); }
+
+  if (editing) {
+    const common = {
+      autoFocus: true,
+      value: draft,
+      onChange: (e) => setDraft(e.target.value),
+      onBlur: commit,
+      className: "inline-edit-field " + className,
+      style,
+      onKeyDown: (e) => {
+        if (e.key === "Escape") { e.preventDefault(); cancel(); }
+        else if (e.key === "Enter" && !multiline) { e.preventDefault(); commit(); }
+        else if (e.key === "Enter" && multiline && (e.metaKey || e.ctrlKey)) { e.preventDefault(); commit(); }
+      },
+    };
+    return multiline
+      ? <textarea rows={6} {...common} />
+      : <input type="text" {...common} />;
+  }
+
+  return React.createElement(
+    tag,
+    { className: className + " inline-editable", style, title: "Click to edit", onClick: () => setEditing(true), role: "button", tabIndex: 0,
+      onKeyDown: (e) => { if (e.key === "Enter") { e.preventDefault(); setEditing(true); } } },
+    value ? value : <span className="inline-empty">{placeholder}</span>
+  );
+}
+
+Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, EditableText, haversine, nextSunday, initials, uniqueSorted });

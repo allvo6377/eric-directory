@@ -467,12 +467,91 @@ function Thumb({
     className: className
   });
 }
+
+/* click-to-edit text: for admins, the text becomes editable in place (click →
+   input/textarea → save on blur or Enter, Esc cancels). For visitors it renders
+   as a plain element. `tag` is the wrapper element for the read view. */
+function EditableText({
+  value,
+  onSave,
+  admin,
+  tag = "div",
+  className = "",
+  multiline = false,
+  placeholder = "Click to add…",
+  style
+}) {
+  const [editing, setEditing] = React.useState(false);
+  const [draft, setDraft] = React.useState(value || "");
+  React.useEffect(() => {
+    if (!editing) setDraft(value || "");
+  }, [value, editing]);
+  if (!admin) {
+    return React.createElement(tag, {
+      className,
+      style
+    }, value);
+  }
+  function commit() {
+    setEditing(false);
+    const v = draft.trim();
+    if (v !== (value || "").trim()) onSave(v);
+  }
+  function cancel() {
+    setEditing(false);
+    setDraft(value || "");
+  }
+  if (editing) {
+    const common = {
+      autoFocus: true,
+      value: draft,
+      onChange: e => setDraft(e.target.value),
+      onBlur: commit,
+      className: "inline-edit-field " + className,
+      style,
+      onKeyDown: e => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          cancel();
+        } else if (e.key === "Enter" && !multiline) {
+          e.preventDefault();
+          commit();
+        } else if (e.key === "Enter" && multiline && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          commit();
+        }
+      }
+    };
+    return multiline ? /*#__PURE__*/React.createElement("textarea", _extends({
+      rows: 6
+    }, common)) : /*#__PURE__*/React.createElement("input", _extends({
+      type: "text"
+    }, common));
+  }
+  return React.createElement(tag, {
+    className: className + " inline-editable",
+    style,
+    title: "Click to edit",
+    onClick: () => setEditing(true),
+    role: "button",
+    tabIndex: 0,
+    onKeyDown: e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        setEditing(true);
+      }
+    }
+  }, value ? value : /*#__PURE__*/React.createElement("span", {
+    className: "inline-empty"
+  }, placeholder));
+}
 Object.assign(window, {
   I,
   PH,
   Slot,
   Thumb,
   thumbUrl,
+  EditableText,
   haversine,
   nextSunday,
   initials,
@@ -1322,7 +1401,20 @@ function ChurchPage({
   }, /*#__PURE__*/React.createElement("a", {
     className: "cp-back",
     onClick: () => navigate(null)
-  }, /*#__PURE__*/React.createElement(window.I.back, null), " All parishes"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(window.I.back, null), " All parishes"), admin && /*#__PURE__*/React.createElement("div", {
+    className: "admin-edit-hint"
+  }, /*#__PURE__*/React.createElement(window.I.edit, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " You're signed in \u2014 click the name, description or any photo to edit it directly. Use ", /*#__PURE__*/React.createElement("a", {
+    href: "#admin",
+    onClick: e => {
+      e.preventDefault();
+      navigate("admin");
+    }
+  }, "Admin"), " for the full editor."), /*#__PURE__*/React.createElement("div", {
     className: "cp-hero"
   }, /*#__PURE__*/React.createElement("div", {
     className: "cp-hero-main"
@@ -1336,7 +1428,14 @@ function ChurchPage({
     className: "cp-hero-overlay"
   }, /*#__PURE__*/React.createElement("span", {
     className: "chip chip-type"
-  }, c.type), /*#__PURE__*/React.createElement("h1", null, c.name), /*#__PURE__*/React.createElement("div", {
+  }, c.type), /*#__PURE__*/React.createElement(window.EditableText, {
+    tag: "h1",
+    admin: admin,
+    value: c.name,
+    onSave: v => v && window.ParishStore.update(c.id, {
+      name: v
+    })
+  }), /*#__PURE__*/React.createElement("div", {
     className: "sub"
   }, subBits))), /*#__PURE__*/React.createElement("div", {
     className: "cp-hero-side"
@@ -1359,12 +1458,20 @@ function ChurchPage({
     style: {
       "--i": si++
     }
-  }, /*#__PURE__*/React.createElement("h2", null, "About this parish"), /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("h2", null, "About this parish"), /*#__PURE__*/React.createElement(window.EditableText, {
+    tag: "p",
     className: "lede",
     style: {
       marginTop: 14
-    }
-  }, c.description)), /*#__PURE__*/React.createElement("div", {
+    },
+    admin: admin,
+    multiline: true,
+    value: c.description,
+    placeholder: "Add a short description of this parish\u2026",
+    onSave: v => window.ParishStore.update(c.id, {
+      description: v
+    })
+  })), /*#__PURE__*/React.createElement("div", {
     className: "section",
     style: {
       "--i": si++
@@ -2968,6 +3075,217 @@ Object.assign(window, {
 });
 })();
 
+/* ======== admin-locate.jsx ======== */
+;(function () {
+/* admin-locate.jsx — bulk "find map locations for parishes without coordinates".
+   Exports window.LocateModal. Geocodes via the server (api/geocode.php →
+   OpenStreetMap Nominatim); the client paces requests to respect usage limits. */
+
+function LocateModal({
+  parishes,
+  onClose
+}) {
+  const [phase, setPhase] = React.useState("idle"); // idle | running | done
+  const [rows, setRows] = React.useState([]);
+  const [cursor, setCursor] = React.useState(0);
+  const cancelRef = React.useRef(false);
+  const targets = React.useMemo(() => (parishes || []).filter(c => !c.coords), [parishes]);
+  const found = rows.filter(r => r.status === "exact" || r.status === "area").length;
+  function geocode(c) {
+    return fetch("api/geocode.php", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Requested-With": "fetch"
+      },
+      body: JSON.stringify({
+        name: c.name,
+        city: c.city,
+        county: c.county
+      })
+    }).then(r => r.json()).catch(() => ({
+      ok: false
+    }));
+  }
+  async function run() {
+    cancelRef.current = false;
+    setPhase("running");
+    const init = targets.map(c => ({
+      id: c.id,
+      name: c.name,
+      city: c.city,
+      status: "pending",
+      precision: ""
+    }));
+    setRows(init);
+    for (let i = 0; i < targets.length; i++) {
+      if (cancelRef.current) break;
+      setCursor(i);
+      const c = targets[i];
+      let res = null;
+      try {
+        res = await geocode(c);
+      } catch (e) {
+        res = null;
+      }
+      const ok = res && res.ok && typeof res.lat === "number";
+      if (ok) {
+        window.ParishStore.update(c.id, {
+          coords: {
+            lat: res.lat,
+            lng: res.lng
+          }
+        });
+      }
+      setRows(prev => prev.map((r, j) => j === i ? {
+        ...r,
+        status: ok ? res.precision : "none"
+      } : r));
+      // pace requests: Nominatim asks for ≤1 lookup/second
+      await new Promise(r => setTimeout(r, 1200));
+    }
+    setCursor(targets.length);
+    setPhase("done");
+  }
+  function stop() {
+    cancelRef.current = true;
+  }
+  const pct = targets.length ? Math.round(Math.min(cursor, targets.length) / targets.length * 100) : 0;
+  const statusMeta = {
+    pending: {
+      cls: "af-pending",
+      label: "…"
+    },
+    exact: {
+      cls: "af-ok",
+      label: "Located"
+    },
+    area: {
+      cls: "af-ok",
+      label: "Approx."
+    },
+    none: {
+      cls: "af-none",
+      label: "Not found"
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay",
+    onMouseDown: () => phase !== "running" && onClose(found > 0)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal modal-autofill",
+    onMouseDown: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-head"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "modal-kicker"
+  }, "Map locations"), /*#__PURE__*/React.createElement("h2", null, "Find missing parish locations")), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn",
+    onClick: () => phase !== "running" && onClose(found > 0),
+    "aria-label": "Close",
+    disabled: phase === "running"
+  }, /*#__PURE__*/React.createElement(window.I.cross, {
+    style: {
+      width: 18,
+      height: 18,
+      transform: "rotate(45deg)"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body"
+  }, phase === "idle" && /*#__PURE__*/React.createElement("div", {
+    className: "af-intro"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "af-lead"
+  }, "Coordinates are looked up from ", /*#__PURE__*/React.createElement("b", null, "OpenStreetMap"), " using each parish's name, area and county. Exact matches place the pin on the church; when only the town is found the pin is placed at the town centre (marked ", /*#__PURE__*/React.createElement("b", null, "Approx."), ") \u2014 you can fine-tune it later in the parish editor."), /*#__PURE__*/React.createElement("div", {
+    className: "af-count-note"
+  }, /*#__PURE__*/React.createElement("b", null, targets.length), " ", targets.length === 1 ? "parish has" : "parishes have", " no map location yet. Parishes already on the map are left untouched."), /*#__PURE__*/React.createElement("div", {
+    className: "af-disclaimer"
+  }, /*#__PURE__*/React.createElement(window.I.warn, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " Lookups run about one per second to respect OpenStreetMap's fair-use limits, so a large batch takes a few minutes. You can stop anytime; progress is saved as it goes.")), phase !== "idle" && /*#__PURE__*/React.createElement("div", {
+    className: "af-progress-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "af-progress-top"
+  }, /*#__PURE__*/React.createElement("span", null, phase === "done" ? "Complete" : "Looking up locations…"), /*#__PURE__*/React.createElement("span", {
+    className: "af-progress-num"
+  }, Math.min(cursor, targets.length), " / ", targets.length)), /*#__PURE__*/React.createElement("div", {
+    className: "af-bar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "af-bar-fill",
+    style: {
+      width: pct + "%"
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "af-summary"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "af-chip af-ok"
+  }, /*#__PURE__*/React.createElement(window.I.check, {
+    style: {
+      width: 13,
+      height: 13
+    }
+  }), " ", found, " located"), /*#__PURE__*/React.createElement("span", {
+    className: "af-chip af-none"
+  }, rows.filter(r => r.status === "none").length, " not found")), /*#__PURE__*/React.createElement("div", {
+    className: "af-list"
+  }, rows.map((r, idx) => {
+    const m = statusMeta[r.status] || statusMeta.pending;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "af-row",
+      key: r.id
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "af-row-main"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "af-row-name"
+    }, r.name), /*#__PURE__*/React.createElement("div", {
+      className: "af-row-city"
+    }, r.city || "—")), /*#__PURE__*/React.createElement("span", {
+      className: "af-status " + m.cls
+    }, r.status === "pending" && idx === cursor ? /*#__PURE__*/React.createElement("span", {
+      className: "spinner",
+      style: {
+        width: 12,
+        height: 12
+      }
+    }) : m.label));
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-foot"
+  }, phase === "idle" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: () => onClose(false)
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: run,
+    disabled: !targets.length
+  }, /*#__PURE__*/React.createElement(window.I.pin, {
+    style: {
+      width: 16,
+      height: 16
+    }
+  }), " Find ", targets.length, " location", targets.length === 1 ? "" : "s")), phase === "running" && /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: stop
+  }, "Stop"), phase === "done" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "af-done-note"
+  }, /*#__PURE__*/React.createElement(window.I.check, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  }), " Located ", found, " of ", targets.length, "."), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onClose(found > 0)
+  }, "Done")))));
+}
+Object.assign(window, {
+  LocateModal
+});
+})();
+
 /* ======== admin-settings.jsx ======== */
 ;(function () {
 /* admin-settings.jsx — "Site settings" modal: every piece of fixed site text,
@@ -3576,6 +3894,7 @@ function AdminView({
   const [editing, setEditing] = React.useState(null); // church record or "new"
   const [importing, setImporting] = React.useState(false);
   const [autofilling, setAutofilling] = React.useState(false);
+  const [locating, setLocating] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
   const [pendingSuggestions, setPendingSuggestions] = React.useState(0);
@@ -3628,6 +3947,10 @@ function AdminView({
     setAutofilling(false);
     if (done) flash("Parish photos updated.");
   }
+  function onLocateClose(done) {
+    setLocating(false);
+    if (done) flash("Parish locations updated.");
+  }
   function onSettingsClose(saved) {
     setSettingsOpen(false);
     if (saved) flash("Site settings saved.");
@@ -3668,6 +3991,9 @@ function AdminView({
     className: "btn btn-ghost",
     onClick: () => setSettingsOpen(true)
   }, /*#__PURE__*/React.createElement(window.I.gear, null), " Site settings"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: () => setLocating(true)
+  }, /*#__PURE__*/React.createElement(window.I.pin, null), " Find locations"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-ghost",
     onClick: () => setAutofilling(true)
   }, /*#__PURE__*/React.createElement(window.I.globe, null), " Auto-fill photos"), /*#__PURE__*/React.createElement("button", {
@@ -3829,6 +4155,9 @@ function AdminView({
   }), autofilling && /*#__PURE__*/React.createElement(window.AutofillModal, {
     parishes: all,
     onClose: onAutofillClose
+  }), locating && /*#__PURE__*/React.createElement(window.LocateModal, {
+    parishes: all,
+    onClose: onLocateClose
   }), settingsOpen && /*#__PURE__*/React.createElement(window.SiteSettingsModal, {
     onClose: onSettingsClose
   }), suggestionsOpen && /*#__PURE__*/React.createElement(window.SuggestionsModal, {
@@ -3946,7 +4275,6 @@ function Topbar({
   route,
   onNav,
   count,
-  authed,
   site
 }) {
   const is = r => route === r ? "nav-link active" : "nav-link";
@@ -3990,16 +4318,7 @@ function Topbar({
     className: is("dioceses"),
     href: "#dioceses",
     onClick: go("dioceses")
-  }, "Dioceses"), authed && /*#__PURE__*/React.createElement("a", {
-    className: is("admin") + " nav-admin",
-    href: "#admin",
-    onClick: go("admin")
-  }, /*#__PURE__*/React.createElement(window.I.lock, {
-    style: {
-      width: 14,
-      height: 14
-    }
-  }), " Admin")), /*#__PURE__*/React.createElement("div", {
+  }, "Dioceses")), /*#__PURE__*/React.createElement("div", {
     className: "topbar-spacer"
   }), /*#__PURE__*/React.createElement("div", {
     className: "topbar-count"
@@ -4042,16 +4361,7 @@ function Topbar({
     className: is("dioceses"),
     href: "#dioceses",
     onClick: go("dioceses")
-  }, "Dioceses"), authed && /*#__PURE__*/React.createElement("a", {
-    className: is("admin"),
-    href: "#admin",
-    onClick: go("admin")
-  }, /*#__PURE__*/React.createElement(window.I.lock, {
-    style: {
-      width: 14,
-      height: 14
-    }
-  }), " Admin"), /*#__PURE__*/React.createElement("div", {
+  }, "Dioceses"), /*#__PURE__*/React.createElement("div", {
     className: "mn-count"
   }, count, " parishes listed")));
 }
@@ -4124,7 +4434,6 @@ function App() {
     route: church ? "" : route,
     onNav: navigate,
     count: parishes.length,
-    authed: authed,
     site: site
   }), /*#__PURE__*/React.createElement("main", {
     style: {
@@ -4160,19 +4469,7 @@ function App() {
     }
   }, site.siteName || "Ecclesia Kenya"))), /*#__PURE__*/React.createElement("div", {
     className: "f-note"
-  }, site.footerNote || "A directory of Catholic parishes, cathedrals and shrines across the dioceses of Kenya."), authed && /*#__PURE__*/React.createElement("a", {
-    className: "f-admin",
-    href: "#admin",
-    onClick: e => {
-      e.preventDefault();
-      navigate("admin");
-    }
-  }, /*#__PURE__*/React.createElement(window.I.gear, {
-    style: {
-      width: 14,
-      height: 14
-    }
-  }), " Parish administration"))));
+  }, site.footerNote || "A directory of Catholic parishes, cathedrals and shrines across the dioceses of Kenya."))));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
 })();

@@ -1,8 +1,7 @@
-// Sample dataset — Catholic churches across Kenya.
-// Church names, dioceses and locations are real/public; Mass times, contacts,
-// clergy names, office hours and events are illustrative SAMPLE data.
-// The live site replaces this list with server data (data/parishes.json via api/parishes.php);
-// this file remains only as the first-run seed shipped to the server.
+// Seed dataset — Catholic churches across Kenya. Church names, dioceses and
+// locations are real/public; schedules and clergy are starter values for the
+// administrator to verify and complete. The live site stores its data in
+// data/parishes.json (via api/parishes.php); this file is only the first-run seed.
 window.CHURCHES = [
   {
     id: "holy-family-basilica",
@@ -25,9 +24,9 @@ window.CHURCHES = [
       { name: "Rev. Fr. Daniel Otieno", title: "Assistant Priest" },
     ],
     contact: {
-      phone: "+254 720 000 101",
-      email: "parish@holyfamilybasilica.example",
-      website: "holyfamilybasilica.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 5:00 PM" },
@@ -69,9 +68,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Giacomo Rossi, IMC", title: "Shrine Rector" },
     clergy: [{ name: "Rev. Fr. Stephen Njoroge, IMC", title: "Assistant" }],
     contact: {
-      phone: "+254 720 000 102",
-      email: "info@consolatashrine.example",
-      website: "consolatashrine.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:30 AM – 4:30 PM" },
@@ -110,9 +109,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Anthony Wambua, CSSp", title: "Parish Priest" },
     clergy: [{ name: "Rev. Fr. Mark Achieng, CSSp", title: "Curate" }],
     contact: {
-      phone: "+254 720 000 103",
-      email: "office@staustins.example",
-      website: "staustins.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 5:00 PM" },
@@ -151,9 +150,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Charles Mwakio", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Joseph Mwacharo", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 104",
-      email: "cathedral@mombasaarchdiocese.example",
-      website: "mombasaarchdiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 4:30 PM" },
@@ -192,9 +191,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Vincent Onyango", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Maurice Odhiambo", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 105",
-      email: "cathedral@kisumuarchdiocese.example",
-      website: "kisumuarchdiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 5:00 PM" },
@@ -233,9 +232,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Francis Maina", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Simon Gichuru", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 106",
-      email: "cathedral@nyeriarchdiocese.example",
-      website: "nyeriarchdiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 4:30 PM" },
@@ -274,9 +273,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Patrick Kiprono", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. George Muturi", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 107",
-      email: "cathedral@nakurudiocese.example",
-      website: "nakurudiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 5:00 PM" },
@@ -315,9 +314,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Dominic Kiptoo", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Elias Barasa", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 108",
-      email: "cathedral@eldoretdiocese.example",
-      website: "eldoretdiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 4:30 PM" },
@@ -356,9 +355,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Lawrence Mutugi", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Julius Kirimi", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 109",
-      email: "cathedral@merudiocese.example",
-      website: "merudiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 5:00 PM" },
@@ -397,9 +396,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Benedict Mutua", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Albert Musyoka", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 110",
-      email: "cathedral@machakosdiocese.example",
-      website: "machakosdiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 4:30 PM" },
@@ -438,9 +437,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Joseph Langat", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Wilson Kirui", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 111",
-      email: "cathedral@kerichodiocese.example",
-      website: "kerichodiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 4:30 PM" },
@@ -479,9 +478,9 @@ window.CHURCHES = [
     priest: { name: "Rev. Fr. Michael Ngugi", title: "Cathedral Administrator" },
     clergy: [{ name: "Rev. Fr. Paul Karanja", title: "Assistant Priest" }],
     contact: {
-      phone: "+254 720 000 112",
-      email: "cathedral@thikadiocese.example",
-      website: "thikadiocese.example",
+      phone: "",
+      email: "",
+      website: "",
     },
     officeHours: [
       { days: "Mon – Fri", hours: "8:00 AM – 5:00 PM" },

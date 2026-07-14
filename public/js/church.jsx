@@ -77,13 +77,20 @@ function ChurchPage({ church: c, navigate, admin }) {
     <div className="cp">
       <a className="cp-back" onClick={() => navigate(null)}><window.I.back /> All parishes</a>
 
+      {admin && (
+        <div className="admin-edit-hint">
+          <window.I.edit style={{ width: 14, height: 14 }} /> You're signed in — click the name, description or any photo to edit it directly. Use <a href="#admin" onClick={(e) => { e.preventDefault(); navigate("admin"); }}>Admin</a> for the full editor.
+        </div>
+      )}
+
       {/* hero */}
       <div className="cp-hero">
         <div className="cp-hero-main">
           <Frame id={"hero-" + c.id} src={c.heroImage || c.images[0]} label={c.gallery[0]} className="hero-slot" admin={admin} />
           <div className="cp-hero-overlay">
             <span className="chip chip-type">{c.type}</span>
-            <h1>{c.name}</h1>
+            <window.EditableText tag="h1" admin={admin} value={c.name}
+              onSave={(v) => v && window.ParishStore.update(c.id, { name: v })} />
             <div className="sub">{subBits}</div>
           </div>
         </div>
@@ -98,7 +105,9 @@ function ChurchPage({ church: c, navigate, admin }) {
         <div className="cp-main">
           <div className="section" style={{ "--i": si++ }}>
             <h2>About this parish</h2>
-            <p className="lede" style={{ marginTop: 14 }}>{c.description}</p>
+            <window.EditableText tag="p" className="lede" style={{ marginTop: 14 }} admin={admin} multiline
+              value={c.description} placeholder="Add a short description of this parish…"
+              onSave={(v) => window.ParishStore.update(c.id, { description: v })} />
           </div>
 
           <div className="section" style={{ "--i": si++ }}>

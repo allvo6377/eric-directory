@@ -7,6 +7,7 @@ function AdminView({ navigate, parishes }) {
   const [editing, setEditing] = React.useState(null); // church record or "new"
   const [importing, setImporting] = React.useState(false);
   const [autofilling, setAutofilling] = React.useState(false);
+  const [locating, setLocating] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
   const [pendingSuggestions, setPendingSuggestions] = React.useState(0);
@@ -53,6 +54,7 @@ function AdminView({ navigate, parishes }) {
   function onFormClose(saved) { setEditing(null); if (saved) flash("Parish saved."); }
   function onImportClose(done) { setImporting(false); if (done) flash("Import complete."); }
   function onAutofillClose(done) { setAutofilling(false); if (done) flash("Parish photos updated."); }
+  function onLocateClose(done) { setLocating(false); if (done) flash("Parish locations updated."); }
   function onSettingsClose(saved) { setSettingsOpen(false); if (saved) flash("Site settings saved."); }
   function doDelete() {
     if (!deleteTarget) return;
@@ -83,6 +85,7 @@ function AdminView({ navigate, parishes }) {
               <window.I.mail /> Suggestions{pendingSuggestions > 0 && <span className="sg-badge">{pendingSuggestions}</span>}
             </button>
             <button className="btn btn-ghost" onClick={() => setSettingsOpen(true)}><window.I.gear /> Site settings</button>
+            <button className="btn btn-ghost" onClick={() => setLocating(true)}><window.I.pin /> Find locations</button>
             <button className="btn btn-ghost" onClick={() => setAutofilling(true)}><window.I.globe /> Auto-fill photos</button>
             <button className="btn btn-ghost" onClick={() => setImporting(true)}><window.I.upload /> Import CSV</button>
             <button className="btn btn-primary" onClick={() => setEditing("new")}><window.I.plus /> Add parish</button>
@@ -158,6 +161,7 @@ function AdminView({ navigate, parishes }) {
       {editing && <window.ParishForm church={editing === "new" ? null : editing} allDioceses={dioceses.filter((x) => x !== "All")} onClose={onFormClose} />}
       {importing && <window.ImportModal onClose={onImportClose} />}
       {autofilling && <window.AutofillModal parishes={all} onClose={onAutofillClose} />}
+      {locating && <window.LocateModal parishes={all} onClose={onLocateClose} />}
       {settingsOpen && <window.SiteSettingsModal onClose={onSettingsClose} />}
       {suggestionsOpen && <window.SuggestionsModal navigate={navigate} onClose={() => { setSuggestionsOpen(false); refreshSuggestionCount(); }} />}
 
