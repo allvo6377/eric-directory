@@ -30,11 +30,70 @@ const I = {
   reset: (p) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>,
 };
 
-/* ---------- placeholder image ---------- */
+/* ---------- branded default church illustration ----------
+   Shown wherever a parish has no real photo yet, so no card/page looks empty.
+   An outlined church drawn in the site's brand color on a soft tint; the shape
+   varies by type (grand twin-tower for cathedrals & basilicas, single steeple
+   for parishes, chapels & shrines). Real uploaded photos always override it. */
+function brandColors() {
+  var fallback = { primary: "#1462b8", soft: "#e7f0fa" };
+  try {
+    var cs = getComputedStyle(document.documentElement);
+    var p = (cs.getPropertyValue("--primary") || "").trim();
+    var s = (cs.getPropertyValue("--primary-soft") || "").trim();
+    return { primary: p || fallback.primary, soft: s || fallback.soft };
+  } catch (e) { return fallback; }
+}
+
+var CHURCH_ART = {
+  steeple:
+    '<path d="M-55,72 V2 H55 V72" fill="OP"/>' +
+    '<path d="M-62,2 L0,-40 L62,2 Z" fill="OP"/>' +
+    '<path d="M-15,-4 V-80 H15 V-4" fill="OP"/>' +
+    '<path d="M-21,-80 L0,-118 L21,-80 Z" fill="OP"/>' +
+    '<path d="M-12,72 V42 A12,12 0 0 1 12,42 V72" fill="none"/>' +
+    '<line x1="-36" y1="26" x2="-36" y2="46"/><line x1="36" y1="26" x2="36" y2="46"/>' +
+    '<path d="M0,-118 V-142 M-9,-131 H9"/>',
+  grand:
+    '<path d="M-38,72 V-4 H38 V72" fill="OP"/>' +
+    '<path d="M-44,-4 L0,-46 L44,-4 Z" fill="OP"/>' +
+    '<path d="M-74,72 V-42 H-38 V72" fill="OP"/>' +
+    '<path d="M-78,-42 L-56,-72 L-34,-42 Z" fill="OP"/>' +
+    '<path d="M38,72 V-42 H74 V72" fill="OP"/>' +
+    '<path d="M34,-42 L56,-72 L78,-42 Z" fill="OP"/>' +
+    '<circle cx="0" cy="24" r="10" fill="none"/>' +
+    '<path d="M-12,72 V48 A12,12 0 0 1 12,48 V72" fill="none"/>' +
+    '<path d="M-56,-72 V-92 M-65,-82 H-47"/><path d="M56,-72 V-92 M47,-82 H65"/>' +
+    '<path d="M0,-46 V-66 M-8,-57 H8"/>',
+};
+function churchArtKind(type) {
+  var t = (type || "").toLowerCase();
+  if (/cathedral|basilica/.test(t)) return "grand";
+  return "steeple";
+}
+function churchArt(type) {
+  var c = brandColors();
+  var art = CHURCH_ART[churchArtKind(type)].replace(/OP/g, c.primary);
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">' +
+    '<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="' + c.soft + '"/><stop offset="1" stop-color="#ffffff"/>' +
+    '</linearGradient></defs>' +
+    '<rect width="400" height="300" fill="url(#cg)"/>' +
+    '<g transform="translate(200,150)" fill="' + c.primary + '" fill-opacity="0.16" ' +
+    'stroke="' + c.primary + '" stroke-opacity="0.5" stroke-width="4" ' +
+    'stroke-linejoin="round" stroke-linecap="round">' + art + '</g></svg>';
+}
+function churchArtURI(type) {
+  return "data:image/svg+xml," + encodeURIComponent(churchArt(type));
+}
+
+/* ---------- light empty frame (secondary gallery/side slots) ---------- */
 function PH({ label, className = "", tall }) {
   return (
-    <div className={"ph " + (tall ? "tall " : "") + className}>
-      <span>{label}</span>
+    <div className={"ph " + (tall ? "tall " : "") + className} title={label || ""}>
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 2v4M10 4h4" /><path d="M12 6l6 4v11H6V10l6-4Z" /><path d="M10 21v-4a2 2 0 0 1 4 0v4" />
+      </svg>
     </div>
   );
 }
@@ -75,10 +134,10 @@ function thumbUrl(src, w) {
   return m ? m[1] + "?width=" + (w || 320) : src;
 }
 
-/* plain image with placeholder fallback (for small thumbnails/cards) */
-function Thumb({ src, label, className = "", width = 320 }) {
+/* plain image with branded church-art fallback (for thumbnails/cards) */
+function Thumb({ src, label, className = "", width = 320, type }) {
   if (src) return <img className={"thumb-img " + className} src={thumbUrl(src, width)} alt={label || ""} loading="lazy" />;
-  return <PH label={label} className={className} />;
+  return <img className={"thumb-img church-art " + className} src={churchArtURI(type)} alt={label || ""} loading="lazy" />;
 }
 
 /* click-to-edit text: for admins, the text becomes editable in place (click →
@@ -127,4 +186,4 @@ function EditableText({ value, onSave, admin, tag = "div", className = "", multi
   );
 }
 
-Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, EditableText, haversine, nextSunday, initials, uniqueSorted });
+Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, churchArt, churchArtURI, EditableText, haversine, nextSunday, initials, uniqueSorted });

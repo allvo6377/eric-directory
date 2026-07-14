@@ -381,15 +381,72 @@ const I = {
   }))
 };
 
-/* ---------- placeholder image ---------- */
+/* ---------- branded default church illustration ----------
+   Shown wherever a parish has no real photo yet, so no card/page looks empty.
+   An outlined church drawn in the site's brand color on a soft tint; the shape
+   varies by type (grand twin-tower for cathedrals & basilicas, single steeple
+   for parishes, chapels & shrines). Real uploaded photos always override it. */
+function brandColors() {
+  var fallback = {
+    primary: "#1462b8",
+    soft: "#e7f0fa"
+  };
+  try {
+    var cs = getComputedStyle(document.documentElement);
+    var p = (cs.getPropertyValue("--primary") || "").trim();
+    var s = (cs.getPropertyValue("--primary-soft") || "").trim();
+    return {
+      primary: p || fallback.primary,
+      soft: s || fallback.soft
+    };
+  } catch (e) {
+    return fallback;
+  }
+}
+var CHURCH_ART = {
+  steeple: '<path d="M-55,72 V2 H55 V72" fill="OP"/>' + '<path d="M-62,2 L0,-40 L62,2 Z" fill="OP"/>' + '<path d="M-15,-4 V-80 H15 V-4" fill="OP"/>' + '<path d="M-21,-80 L0,-118 L21,-80 Z" fill="OP"/>' + '<path d="M-12,72 V42 A12,12 0 0 1 12,42 V72" fill="none"/>' + '<line x1="-36" y1="26" x2="-36" y2="46"/><line x1="36" y1="26" x2="36" y2="46"/>' + '<path d="M0,-118 V-142 M-9,-131 H9"/>',
+  grand: '<path d="M-38,72 V-4 H38 V72" fill="OP"/>' + '<path d="M-44,-4 L0,-46 L44,-4 Z" fill="OP"/>' + '<path d="M-74,72 V-42 H-38 V72" fill="OP"/>' + '<path d="M-78,-42 L-56,-72 L-34,-42 Z" fill="OP"/>' + '<path d="M38,72 V-42 H74 V72" fill="OP"/>' + '<path d="M34,-42 L56,-72 L78,-42 Z" fill="OP"/>' + '<circle cx="0" cy="24" r="10" fill="none"/>' + '<path d="M-12,72 V48 A12,12 0 0 1 12,48 V72" fill="none"/>' + '<path d="M-56,-72 V-92 M-65,-82 H-47"/><path d="M56,-72 V-92 M47,-82 H65"/>' + '<path d="M0,-46 V-66 M-8,-57 H8"/>'
+};
+function churchArtKind(type) {
+  var t = (type || "").toLowerCase();
+  if (/cathedral|basilica/.test(t)) return "grand";
+  return "steeple";
+}
+function churchArt(type) {
+  var c = brandColors();
+  var art = CHURCH_ART[churchArtKind(type)].replace(/OP/g, c.primary);
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">' + '<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">' + '<stop offset="0" stop-color="' + c.soft + '"/><stop offset="1" stop-color="#ffffff"/>' + '</linearGradient></defs>' + '<rect width="400" height="300" fill="url(#cg)"/>' + '<g transform="translate(200,150)" fill="' + c.primary + '" fill-opacity="0.16" ' + 'stroke="' + c.primary + '" stroke-opacity="0.5" stroke-width="4" ' + 'stroke-linejoin="round" stroke-linecap="round">' + art + '</g></svg>';
+}
+function churchArtURI(type) {
+  return "data:image/svg+xml," + encodeURIComponent(churchArt(type));
+}
+
+/* ---------- light empty frame (secondary gallery/side slots) ---------- */
 function PH({
   label,
   className = "",
   tall
 }) {
   return /*#__PURE__*/React.createElement("div", {
-    className: "ph " + (tall ? "tall " : "") + className
-  }, /*#__PURE__*/React.createElement("span", null, label));
+    className: "ph " + (tall ? "tall " : "") + className,
+    title: label || ""
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "34",
+    height: "34",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M12 2v4M10 4h4"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 6l6 4v11H6V10l6-4Z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M10 21v-4a2 2 0 0 1 4 0v4"
+  })));
 }
 
 /* ---------- helpers ---------- */
@@ -449,12 +506,13 @@ function thumbUrl(src, w) {
   return m ? m[1] + "?width=" + (w || 320) : src;
 }
 
-/* plain image with placeholder fallback (for small thumbnails/cards) */
+/* plain image with branded church-art fallback (for thumbnails/cards) */
 function Thumb({
   src,
   label,
   className = "",
-  width = 320
+  width = 320,
+  type
 }) {
   if (src) return /*#__PURE__*/React.createElement("img", {
     className: "thumb-img " + className,
@@ -462,9 +520,11 @@ function Thumb({
     alt: label || "",
     loading: "lazy"
   });
-  return /*#__PURE__*/React.createElement(PH, {
-    label: label,
-    className: className
+  return /*#__PURE__*/React.createElement("img", {
+    className: "thumb-img church-art " + className,
+    src: churchArtURI(type),
+    alt: label || "",
+    loading: "lazy"
   });
 }
 
@@ -551,6 +611,8 @@ Object.assign(window, {
   Slot,
   Thumb,
   thumbUrl,
+  churchArt,
+  churchArtURI,
   EditableText,
   haversine,
   nextSunday,
@@ -577,8 +639,9 @@ function makeIcon(active) {
 function popupHTML(c) {
   const s = window.nextSunday(c.massTimes);
   const meta = [c.city, s ? "Sun " + s.time + (s.language ? " (" + s.language + ")" : "") : null].filter(Boolean).join(" · ");
-  const img = window.thumbUrl(c.heroImage || c.images[0], 480);
-  const imgHTML = img ? `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />` : `<div class="ph"><span>${c.gallery[0]}</span></div>`;
+  const real = c.heroImage || c.images[0];
+  const img = real ? window.thumbUrl(real, 480) : window.churchArtURI(c.type);
+  const imgHTML = `<img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" />`;
   return `
     <div class="pop">
       <div class="pop-img">${imgHTML}</div>
@@ -868,7 +931,9 @@ function LiveSearch({
       className: "sd-ic"
     }, /*#__PURE__*/React.createElement(window.Thumb, {
       src: c.heroImage || c.images[0],
-      label: c.type
+      label: c.type,
+      type: c.type,
+      width: 96
     })), /*#__PURE__*/React.createElement("div", {
       className: "sd-main"
     }, /*#__PURE__*/React.createElement("div", {
@@ -913,7 +978,9 @@ function ChurchCard({
     className: "ch-thumb"
   }, /*#__PURE__*/React.createElement(window.Thumb, {
     src: c.heroImage || c.images[0],
-    label: c.gallery[0]
+    label: c.gallery[0],
+    type: c.type,
+    width: 200
   })), /*#__PURE__*/React.createElement("div", {
     className: "ch-main"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1147,7 +1214,9 @@ function DioParishCard({
     className: "dio-card-thumb"
   }, /*#__PURE__*/React.createElement(window.Thumb, {
     src: c.heroImage || c.images[0],
-    label: c.gallery[0]
+    label: c.gallery[0],
+    type: c.type,
+    width: 140
   })), /*#__PURE__*/React.createElement("div", {
     className: "dio-card-body"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1305,13 +1374,17 @@ function ContactRow({
   }, k), children));
 }
 
-/* image frame: drag-droppable slot for admins, static image/placeholder for visitors */
+/* image frame: drag-droppable slot for admins, static image/placeholder for
+   visitors. `art` → use the branded church illustration as the empty fallback
+   (used for the prominent hero); otherwise a light empty frame. */
 function Frame({
   id,
   src,
   label,
   className,
-  admin
+  admin,
+  type,
+  art
 }) {
   if (admin) return /*#__PURE__*/React.createElement(window.Slot, {
     id: id,
@@ -1326,9 +1399,127 @@ function Frame({
     src: src,
     alt: label || "",
     loading: "lazy"
+  }) : art ? /*#__PURE__*/React.createElement("img", {
+    className: "frame-img church-art",
+    src: window.churchArtURI(type),
+    alt: label || ""
   }) : /*#__PURE__*/React.createElement(window.PH, {
     label: label
   }));
+}
+
+/* Mass & service times — a striped table for visitors, an inline editor
+   (add / edit / remove rows) for signed-in admins. */
+const MASS_DAYS = ["Sunday", "Weekdays", "Daily", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Public Holidays"];
+const MASS_LANGS = ["", "English", "Swahili", "Kikuyu", "Kimeru", "Kamba", "Kipsigis", "Latin", "Children's"];
+function MassTimes({
+  church: c,
+  admin,
+  navigate
+}) {
+  const [rows, setRows] = React.useState(() => (c.massTimes || []).map(m => ({
+    ...m
+  })));
+  React.useEffect(() => {
+    setRows((c.massTimes || []).map(m => ({
+      ...m
+    })));
+  }, [c.id]);
+  function persist(next) {
+    window.ParishStore.update(c.id, {
+      massTimes: next.filter(m => (m.time || "").trim())
+    });
+  }
+  const setLocal = (i, k, v) => setRows(r => r.map((m, j) => j === i ? {
+    ...m,
+    [k]: v
+  } : m));
+  const saveField = (i, k, v) => {
+    const next = rows.map((m, j) => j === i ? {
+      ...m,
+      [k]: v
+    } : m);
+    setRows(next);
+    persist(next);
+  };
+  const addRow = () => {
+    const next = [...rows, {
+      day: "Sunday",
+      time: "",
+      language: "English"
+    }];
+    setRows(next);
+  };
+  const delRow = i => {
+    const next = rows.filter((_, j) => j !== i);
+    setRows(next);
+    persist(next);
+  };
+  if (!admin) {
+    if (!c.massTimes.length) return /*#__PURE__*/React.createElement("div", {
+      className: "empty",
+      style: {
+        textAlign: "left",
+        padding: "20px 22px"
+      }
+    }, "Mass schedule not yet listed for this parish.");
+    return /*#__PURE__*/React.createElement("div", {
+      className: "mass-table"
+    }, c.massTimes.map((m, i) => /*#__PURE__*/React.createElement("div", {
+      className: "mass-row",
+      key: i
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "m-day"
+    }, m.day), /*#__PURE__*/React.createElement("div", {
+      className: "m-time"
+    }, m.time), /*#__PURE__*/React.createElement("div", null, m.language ? /*#__PURE__*/React.createElement("span", {
+      className: "chip chip-lang"
+    }, m.language) : null))));
+  }
+
+  // admin — editable
+  return /*#__PURE__*/React.createElement("div", {
+    className: "mass-edit"
+  }, rows.map((m, i) => /*#__PURE__*/React.createElement("div", {
+    className: "mass-edit-row",
+    key: i
+  }, /*#__PURE__*/React.createElement("select", {
+    value: m.day,
+    onChange: e => saveField(i, "day", e.target.value),
+    "aria-label": "Day"
+  }, MASS_DAYS.map(d => /*#__PURE__*/React.createElement("option", {
+    key: d
+  }, d))), /*#__PURE__*/React.createElement("input", {
+    value: m.time,
+    onChange: e => setLocal(i, "time", e.target.value),
+    onBlur: () => persist(rows),
+    placeholder: "7:00 AM",
+    "aria-label": "Time"
+  }), /*#__PURE__*/React.createElement("select", {
+    value: m.language,
+    onChange: e => saveField(i, "language", e.target.value),
+    "aria-label": "Language"
+  }, MASS_LANGS.map(l => /*#__PURE__*/React.createElement("option", {
+    key: l,
+    value: l
+  }, l || "—"))), /*#__PURE__*/React.createElement("button", {
+    className: "row-del",
+    onClick: () => delRow(i),
+    "aria-label": "Remove time"
+  }, /*#__PURE__*/React.createElement(window.I.trash, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  })))), /*#__PURE__*/React.createElement("button", {
+    className: "add-row",
+    onClick: addRow
+  }, /*#__PURE__*/React.createElement(window.I.plus, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " Add Mass time"));
 }
 function ChurchPage({
   church: c,
@@ -1423,7 +1614,9 @@ function ChurchPage({
     src: c.heroImage || c.images[0],
     label: c.gallery[0],
     className: "hero-slot",
-    admin: admin
+    admin: admin,
+    type: c.type,
+    art: true
   }), /*#__PURE__*/React.createElement("div", {
     className: "cp-hero-overlay"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1476,33 +1669,31 @@ function ChurchPage({
     style: {
       "--i": si++
     }
-  }, /*#__PURE__*/React.createElement("h2", null, "Mass & service times"), c.confessions && /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h2", null, "Mass & service times"), admin ? /*#__PURE__*/React.createElement("div", {
     className: "sec-sub"
-  }, "Confessions: ", c.confessions, c.adoration ? " · Adoration: " + c.adoration : ""), c.massTimes.length ? /*#__PURE__*/React.createElement("div", {
-    className: "mass-table"
-  }, c.massTimes.map((m, i) => /*#__PURE__*/React.createElement("div", {
-    className: "mass-row",
-    key: i
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "m-day"
-  }, m.day), /*#__PURE__*/React.createElement("div", {
-    className: "m-time"
-  }, m.time), /*#__PURE__*/React.createElement("div", null, m.language ? /*#__PURE__*/React.createElement("span", {
-    className: "chip chip-lang"
-  }, m.language) : null)))) : /*#__PURE__*/React.createElement("div", {
-    className: "empty",
-    style: {
-      textAlign: "left",
-      padding: "20px 22px"
-    }
-  }, "Mass schedule not yet listed for this parish. ", admin && /*#__PURE__*/React.createElement("a", {
-    style: {
-      color: "var(--primary)",
-      fontWeight: 600,
-      cursor: "pointer"
-    },
-    onClick: () => navigate("admin")
-  }, "Add times in Admin \u2192"))), (c.sacraments.length > 0 || c.services.length > 0) && /*#__PURE__*/React.createElement("div", {
+  }, "Confessions: ", /*#__PURE__*/React.createElement(window.EditableText, {
+    tag: "span",
+    admin: true,
+    value: c.confessions,
+    placeholder: "add confession times\u2026",
+    onSave: v => window.ParishStore.update(c.id, {
+      confessions: v
+    })
+  }), " · ", "Adoration: ", /*#__PURE__*/React.createElement(window.EditableText, {
+    tag: "span",
+    admin: true,
+    value: c.adoration,
+    placeholder: "add adoration times\u2026",
+    onSave: v => window.ParishStore.update(c.id, {
+      adoration: v
+    })
+  })) : c.confessions && /*#__PURE__*/React.createElement("div", {
+    className: "sec-sub"
+  }, "Confessions: ", c.confessions, c.adoration ? " · Adoration: " + c.adoration : ""), /*#__PURE__*/React.createElement(MassTimes, {
+    church: c,
+    admin: admin,
+    navigate: navigate
+  })), (c.sacraments.length > 0 || c.services.length > 0) && /*#__PURE__*/React.createElement("div", {
     className: "section",
     style: {
       "--i": si++
@@ -1716,23 +1907,15 @@ function ChurchPage({
   }), " Suggest an update")), /*#__PURE__*/React.createElement("div", {
     className: "side-card"
   }, /*#__PURE__*/React.createElement("h3", null, "Office hours"), c.officeHours.length ? c.officeHours.map((o, i) => /*#__PURE__*/React.createElement("div", {
-    className: "ic-row",
+    className: "office-row",
     key: i,
     style: {
-      padding: "7px 0",
-      borderBottom: i < c.officeHours.length - 1 ? "1px solid var(--line)" : "none",
-      gap: 16
+      borderBottom: i < c.officeHours.length - 1 ? "1px solid var(--line)" : "none"
     }
   }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: "var(--ink-2)",
-      flex: "none"
-    }
+    className: "or-days"
   }, o.days), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 600,
-      textAlign: "right"
-    }
+    className: "or-hours"
   }, o.hours))) : /*#__PURE__*/React.createElement("div", {
     className: "muted",
     style: {

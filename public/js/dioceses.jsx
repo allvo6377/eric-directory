@@ -4,7 +4,7 @@ function DioParishCard({ c, navigate }) {
   const s = window.nextSunday(c.massTimes);
   return (
     <div className="dio-card" onClick={() => navigate(c.id)}>
-      <div className="dio-card-thumb"><window.Thumb src={c.heroImage || c.images[0]} label={c.gallery[0]} /></div>
+      <div className="dio-card-thumb"><window.Thumb src={c.heroImage || c.images[0]} label={c.gallery[0]} type={c.type} width={140} /></div>
       <div className="dio-card-body">
         <div className="dio-card-type">{c.type}</div>
         <div className="dio-card-name">{c.name}</div>

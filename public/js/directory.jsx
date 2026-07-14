@@ -77,7 +77,7 @@ function LiveSearch({ all, query, setQuery, onPick }) {
                 onMouseEnter={() => setKbd(i)}
                 onMouseDown={(e) => {e.preventDefault();onPick(c.id);}}>
 
-                    <div className="sd-ic"><window.Thumb src={c.heroImage || c.images[0]} label={c.type} /></div>
+                    <div className="sd-ic"><window.Thumb src={c.heroImage || c.images[0]} label={c.type} type={c.type} width={96} /></div>
                     <div className="sd-main">
                       <div className="sd-name">{highlight(c.name, q)}</div>
                       <div className="sd-meta"><window.I.pin style={{ width: 13, height: 13 }} /> {[c.city, c.diocese].filter(Boolean).join(" · ")}{s ? " · Sun " + s.time : ""}</div>
@@ -109,7 +109,7 @@ function ChurchCard({ c, active, onHover, onOpen, dist, cardStyle, index }) {
       onMouseEnter={() => onHover(c.id)}
       onClick={() => onOpen(c.id)}>
 
-      <div className="ch-thumb"><window.Thumb src={c.heroImage || c.images[0]} label={c.gallery[0]} /></div>
+      <div className="ch-thumb"><window.Thumb src={c.heroImage || c.images[0]} label={c.gallery[0]} type={c.type} width={200} /></div>
       <div className="ch-main">
         <div className="ch-top">
           <span className="chip chip-type">{c.type}</span>

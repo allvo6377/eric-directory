@@ -239,19 +239,16 @@ image-slot { display: block; width: 100%; height: 100%; }
 .gallery .slot-wrap { aspect-ratio: 1 / 1; border-radius: var(--radius-sm); overflow: hidden; }
 .gallery .slot-wrap.wide { grid-column: span 2; aspect-ratio: 2 / 1; }
 
-/* placeholder image */
+/* light empty frame (secondary gallery/side slots) */
 .ph {
   position: relative; width: 100%; height: 100%;
   background-color: var(--bg-sink);
-  background-image: repeating-linear-gradient(135deg, rgba(30,58,95,0.06) 0 8px, rgba(30,58,95,0.0) 8px 16px);
   display: grid; place-items: center; overflow: hidden;
+  color: var(--ink-4);
 }
-.ph span {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 10px; letter-spacing: 0.02em; color: var(--ink-4);
-  text-align: center; padding: 6px; line-height: 1.3;
-}
-.ph.tall span { font-size: 12px; }
+.ph svg { opacity: 0.3; }
+/* branded church-art fallback fills its frame like a real photo */
+.church-art { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* map column */
 .map-col { position: sticky; top: 86px; }
@@ -398,6 +395,25 @@ image-slot { display: block; width: 100%; height: 100%; }
 }
 .section > .sec-sub { color: var(--ink-3); font-size: 14px; margin-bottom: 18px; }
 .lede { font-size: 17px; line-height: 1.7; color: var(--ink-2); }
+
+/* office hours rows (sidebar) */
+.office-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: 14px; }
+.office-row .or-days { color: var(--ink-2); flex: none; }
+.office-row .or-hours { font-weight: 600; text-align: right; color: var(--ink); }
+
+/* inline Mass-time editor (admin, on the parish page) */
+.mass-edit { display: flex; flex-direction: column; gap: 9px; }
+.mass-edit-row { display: grid; grid-template-columns: 1.15fr 1fr 1.05fr 40px; gap: 8px; align-items: center; }
+.mass-edit-row select, .mass-edit-row input {
+  width: 100%; border: 1px solid var(--line-2); border-radius: 9px;
+  padding: 9px 10px; font-family: inherit; font-size: 14px; color: var(--ink); background: var(--bg);
+}
+.mass-edit-row select:focus, .mass-edit-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.mass-edit .add-row { align-self: flex-start; margin-top: 2px; }
+@media (max-width: 560px) {
+  .mass-edit-row { grid-template-columns: 1fr 1fr 40px; }
+  .mass-edit-row select:first-child { grid-column: 1 / -1; }
+}
 
 /* mass times table */
 .mass-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }

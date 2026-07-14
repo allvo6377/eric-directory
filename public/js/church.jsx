@@ -18,14 +18,72 @@ function ContactRow({ icon, k, children }) {
   );
 }
 
-/* image frame: drag-droppable slot for admins, static image/placeholder for visitors */
-function Frame({ id, src, label, className, admin }) {
+/* image frame: drag-droppable slot for admins, static image/placeholder for
+   visitors. `art` → use the branded church illustration as the empty fallback
+   (used for the prominent hero); otherwise a light empty frame. */
+function Frame({ id, src, label, className, admin, type, art }) {
   if (admin) return <window.Slot id={id} src={src} label={label} className={className} />;
   return (
     <div className={"slot-wrap " + (className || "")}>
       {src
         ? <img className="frame-img" src={src} alt={label || ""} loading="lazy" />
-        : <window.PH label={label} />}
+        : (art
+            ? <img className="frame-img church-art" src={window.churchArtURI(type)} alt={label || ""} />
+            : <window.PH label={label} />)}
+    </div>
+  );
+}
+
+/* Mass & service times — a striped table for visitors, an inline editor
+   (add / edit / remove rows) for signed-in admins. */
+const MASS_DAYS = ["Sunday", "Weekdays", "Daily", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Public Holidays"];
+const MASS_LANGS = ["", "English", "Swahili", "Kikuyu", "Kimeru", "Kamba", "Kipsigis", "Latin", "Children's"];
+
+function MassTimes({ church: c, admin, navigate }) {
+  const [rows, setRows] = React.useState(() => (c.massTimes || []).map((m) => ({ ...m })));
+  React.useEffect(() => { setRows((c.massTimes || []).map((m) => ({ ...m }))); }, [c.id]);
+
+  function persist(next) {
+    window.ParishStore.update(c.id, { massTimes: next.filter((m) => (m.time || "").trim()) });
+  }
+  const setLocal = (i, k, v) => setRows((r) => r.map((m, j) => (j === i ? { ...m, [k]: v } : m)));
+  const saveField = (i, k, v) => { const next = rows.map((m, j) => (j === i ? { ...m, [k]: v } : m)); setRows(next); persist(next); };
+  const addRow = () => { const next = [...rows, { day: "Sunday", time: "", language: "English" }]; setRows(next); };
+  const delRow = (i) => { const next = rows.filter((_, j) => j !== i); setRows(next); persist(next); };
+
+  if (!admin) {
+    if (!c.massTimes.length) return (
+      <div className="empty" style={{ textAlign: "left", padding: "20px 22px" }}>Mass schedule not yet listed for this parish.</div>
+    );
+    return (
+      <div className="mass-table">
+        {c.massTimes.map((m, i) => (
+          <div className="mass-row" key={i}>
+            <div className="m-day">{m.day}</div>
+            <div className="m-time">{m.time}</div>
+            <div>{m.language ? <span className="chip chip-lang">{m.language}</span> : null}</div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // admin — editable
+  return (
+    <div className="mass-edit">
+      {rows.map((m, i) => (
+        <div className="mass-edit-row" key={i}>
+          <select value={m.day} onChange={(e) => saveField(i, "day", e.target.value)} aria-label="Day">
+            {MASS_DAYS.map((d) => <option key={d}>{d}</option>)}
+          </select>
+          <input value={m.time} onChange={(e) => setLocal(i, "time", e.target.value)} onBlur={() => persist(rows)} placeholder="7:00 AM" aria-label="Time" />
+          <select value={m.language} onChange={(e) => saveField(i, "language", e.target.value)} aria-label="Language">
+            {MASS_LANGS.map((l) => <option key={l} value={l}>{l || "—"}</option>)}
+          </select>
+          <button className="row-del" onClick={() => delRow(i)} aria-label="Remove time"><window.I.trash style={{ width: 15, height: 15 }} /></button>
+        </div>
+      ))}
+      <button className="add-row" onClick={addRow}><window.I.plus style={{ width: 14, height: 14 }} /> Add Mass time</button>
     </div>
   );
 }
@@ -86,7 +144,7 @@ function ChurchPage({ church: c, navigate, admin }) {
       {/* hero */}
       <div className="cp-hero">
         <div className="cp-hero-main">
-          <Frame id={"hero-" + c.id} src={c.heroImage || c.images[0]} label={c.gallery[0]} className="hero-slot" admin={admin} />
+          <Frame id={"hero-" + c.id} src={c.heroImage || c.images[0]} label={c.gallery[0]} className="hero-slot" admin={admin} type={c.type} art />
           <div className="cp-hero-overlay">
             <span className="chip chip-type">{c.type}</span>
             <window.EditableText tag="h1" admin={admin} value={c.name}
@@ -112,22 +170,15 @@ function ChurchPage({ church: c, navigate, admin }) {
 
           <div className="section" style={{ "--i": si++ }}>
             <h2>Mass &amp; service times</h2>
-            {c.confessions && <div className="sec-sub">Confessions: {c.confessions}{c.adoration ? " · Adoration: " + c.adoration : ""}</div>}
-            {c.massTimes.length ? (
-              <div className="mass-table">
-                {c.massTimes.map((m, i) => (
-                  <div className="mass-row" key={i}>
-                    <div className="m-day">{m.day}</div>
-                    <div className="m-time">{m.time}</div>
-                    <div>{m.language ? <span className="chip chip-lang">{m.language}</span> : null}</div>
-                  </div>
-                ))}
+            {admin ? (
+              <div className="sec-sub">
+                Confessions: <window.EditableText tag="span" admin value={c.confessions} placeholder="add confession times…" onSave={(v) => window.ParishStore.update(c.id, { confessions: v })} />
+                {" · "}Adoration: <window.EditableText tag="span" admin value={c.adoration} placeholder="add adoration times…" onSave={(v) => window.ParishStore.update(c.id, { adoration: v })} />
               </div>
             ) : (
-              <div className="empty" style={{ textAlign: "left", padding: "20px 22px" }}>
-                Mass schedule not yet listed for this parish. {admin && <a style={{ color: "var(--primary)", fontWeight: 600, cursor: "pointer" }} onClick={() => navigate("admin")}>Add times in Admin →</a>}
-              </div>
+              c.confessions && <div className="sec-sub">Confessions: {c.confessions}{c.adoration ? " · Adoration: " + c.adoration : ""}</div>
             )}
+            <MassTimes church={c} admin={admin} navigate={navigate} />
           </div>
 
           {(c.sacraments.length > 0 || c.services.length > 0) && (
@@ -242,9 +293,9 @@ function ChurchPage({ church: c, navigate, admin }) {
           <div className="side-card">
             <h3>Office hours</h3>
             {c.officeHours.length ? c.officeHours.map((o, i) => (
-              <div className="ic-row" key={i} style={{ padding: "7px 0", borderBottom: i < c.officeHours.length - 1 ? "1px solid var(--line)" : "none", gap: 16 }}>
-                <span style={{ color: "var(--ink-2)", flex: "none" }}>{o.days}</span>
-                <span style={{ fontWeight: 600, textAlign: "right" }}>{o.hours}</span>
+              <div className="office-row" key={i} style={{ borderBottom: i < c.officeHours.length - 1 ? "1px solid var(--line)" : "none" }}>
+                <span className="or-days">{o.days}</span>
+                <span className="or-hours">{o.hours}</span>
               </div>
             )) : <div className="muted" style={{ fontSize: 13.5 }}>Contact the parish office for hours.</div>}
           </div>
