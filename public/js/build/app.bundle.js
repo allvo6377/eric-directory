@@ -4266,11 +4266,19 @@ function AdminView({
     className: "table-card"
   }, /*#__PURE__*/React.createElement("table", {
     className: "parish-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Parish"), /*#__PURE__*/React.createElement("th", null, "Type"), /*#__PURE__*/React.createElement("th", null, "Diocese"), /*#__PURE__*/React.createElement("th", null, "Area"), /*#__PURE__*/React.createElement("th", {
-    className: "ta-c"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Parish"), /*#__PURE__*/React.createElement("th", {
+    className: "col-type"
+  }, "Type"), /*#__PURE__*/React.createElement("th", {
+    className: "col-dio"
+  }, "Diocese"), /*#__PURE__*/React.createElement("th", {
+    className: "col-area"
+  }, "Area"), /*#__PURE__*/React.createElement("th", {
+    className: "ta-c col-map"
   }, "Map"), /*#__PURE__*/React.createElement("th", {
-    className: "ta-c"
-  }, "Times"), /*#__PURE__*/React.createElement("th", null, "Source"), /*#__PURE__*/React.createElement("th", {
+    className: "ta-c col-times"
+  }, "Times"), /*#__PURE__*/React.createElement("th", {
+    className: "col-source"
+  }, "Source"), /*#__PURE__*/React.createElement("th", {
     className: "ta-r"
   }, "Actions"))), /*#__PURE__*/React.createElement("tbody", null, filtered.map(c => /*#__PURE__*/React.createElement("tr", {
     key: c.id
@@ -4282,23 +4290,29 @@ function AdminView({
       e.preventDefault();
       navigate(c.id);
     }
-  }, c.name)), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+  }, c.name)), /*#__PURE__*/React.createElement("td", {
+    className: "col-type"
+  }, /*#__PURE__*/React.createElement("span", {
     className: "mini-chip"
   }, c.type)), /*#__PURE__*/React.createElement("td", {
-    className: "pt-dim"
-  }, c.diocese), /*#__PURE__*/React.createElement("td", null, [c.city, c.county].filter(Boolean).join(", ") || "—"), /*#__PURE__*/React.createElement("td", {
-    className: "ta-c"
+    className: "pt-dim col-dio"
+  }, c.diocese), /*#__PURE__*/React.createElement("td", {
+    className: "col-area"
+  }, [c.city, c.county].filter(Boolean).join(", ") || "—"), /*#__PURE__*/React.createElement("td", {
+    className: "ta-c col-map"
   }, c.coords ? /*#__PURE__*/React.createElement("span", {
     className: "dot-ok"
   }) : /*#__PURE__*/React.createElement("span", {
     className: "dot-no"
   })), /*#__PURE__*/React.createElement("td", {
-    className: "ta-c"
+    className: "ta-c col-times"
   }, c.massTimes.length ? /*#__PURE__*/React.createElement("span", {
     className: "num-badge"
   }, c.massTimes.length) : /*#__PURE__*/React.createElement("span", {
     className: "pt-dim"
-  }, "\u2014")), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+  }, "\u2014")), /*#__PURE__*/React.createElement("td", {
+    className: "col-source"
+  }, /*#__PURE__*/React.createElement("span", {
     className: "src-tag src-" + c.source
   }, srcLabel[c.source] || c.source)), /*#__PURE__*/React.createElement("td", {
     className: "ta-r"

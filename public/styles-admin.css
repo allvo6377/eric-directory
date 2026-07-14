@@ -228,7 +228,18 @@
   .admin-stats { grid-template-columns: repeat(2, 1fr); }
   .form-grid { grid-template-columns: 1fr; }
   .parish-table { font-size: 13px; }
-  .parish-table .pt-dim { display: none; }
+}
+
+/* Responsive admin table — hide whole COLUMNS (header + cells together, so
+   they never misalign) as the screen narrows. The parish name and the
+   edit/delete actions always stay; everything else is available in the editor. */
+@media (max-width: 900px) { .parish-table .col-dio { display: none; } }
+@media (max-width: 760px) { .parish-table .col-area, .parish-table .col-source { display: none; } }
+@media (max-width: 620px) {
+  .parish-table .col-map, .parish-table .col-times { display: none; }
+  /* the page already scrolls; a sticky header here only overlapped the first row */
+  .parish-table thead th { position: static; }
+  .parish-table thead th, .parish-table td { padding: 12px 12px; }
 }
 
 /* ============================================================

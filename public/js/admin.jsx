@@ -128,20 +128,20 @@ function AdminView({ navigate, parishes }) {
           <table className="parish-table">
             <thead>
               <tr>
-                <th>Parish</th><th>Type</th><th>Diocese</th><th>Area</th>
-                <th className="ta-c">Map</th><th className="ta-c">Times</th><th>Source</th><th className="ta-r">Actions</th>
+                <th>Parish</th><th className="col-type">Type</th><th className="col-dio">Diocese</th><th className="col-area">Area</th>
+                <th className="ta-c col-map">Map</th><th className="ta-c col-times">Times</th><th className="col-source">Source</th><th className="ta-r">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((c) => (
                 <tr key={c.id}>
                   <td className="pt-name"><a href={"#" + c.id} onClick={(e) => { e.preventDefault(); navigate(c.id); }}>{c.name}</a></td>
-                  <td><span className="mini-chip">{c.type}</span></td>
-                  <td className="pt-dim">{c.diocese}</td>
-                  <td>{[c.city, c.county].filter(Boolean).join(", ") || "—"}</td>
-                  <td className="ta-c">{c.coords ? <span className="dot-ok" /> : <span className="dot-no" />}</td>
-                  <td className="ta-c">{c.massTimes.length ? <span className="num-badge">{c.massTimes.length}</span> : <span className="pt-dim">—</span>}</td>
-                  <td><span className={"src-tag src-" + c.source}>{srcLabel[c.source] || c.source}</span></td>
+                  <td className="col-type"><span className="mini-chip">{c.type}</span></td>
+                  <td className="pt-dim col-dio">{c.diocese}</td>
+                  <td className="col-area">{[c.city, c.county].filter(Boolean).join(", ") || "—"}</td>
+                  <td className="ta-c col-map">{c.coords ? <span className="dot-ok" /> : <span className="dot-no" />}</td>
+                  <td className="ta-c col-times">{c.massTimes.length ? <span className="num-badge">{c.massTimes.length}</span> : <span className="pt-dim">—</span>}</td>
+                  <td className="col-source"><span className={"src-tag src-" + c.source}>{srcLabel[c.source] || c.source}</span></td>
                   <td className="ta-r">
                     <div className="row-actions">
                       <button className="icon-btn" title="Edit" onClick={() => setEditing(c)}><window.I.edit style={{ width: 16, height: 16 }} /></button>
