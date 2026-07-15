@@ -255,6 +255,12 @@ image-slot { display: block; width: 100%; height: 100%; }
 .map-panel {
   border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden;
   box-shadow: var(--shadow-sm); background: var(--bg);
+  /* Contain Leaflet's internal panes/controls (z-index 200–800) inside this
+     box's OWN stacking context. Without this they live in the root context and
+     paint over the search dropdown (z-index 1400 inside the toolbar) whenever
+     the map sits directly below the search — i.e. the stacked/map-first mobile
+     layouts. z-index:0 keeps the whole map safely beneath the toolbar. */
+  position: relative; z-index: 0;
 }
 .map-canvas { width: 100%; height: 640px; }
 .dir-body.stacked .map-canvas { height: 460px; }
