@@ -364,7 +364,8 @@ image-slot { display: block; width: 100%; height: 100%; }
 .cp { max-width: var(--maxw); margin: 0 auto; padding: 0 28px 72px; }
 .cp-back {
   display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600;
-  color: var(--ink-2); padding: 16px 0 4px;
+  color: var(--ink-2); padding: 16px 0 4px; cursor: pointer;
+  -webkit-user-select: none; user-select: none;
 }
 .cp-back:hover { color: var(--primary); }
 
@@ -644,8 +645,11 @@ textarea.inline-edit-field { line-height: 1.6; resize: vertical; }
   .map-col { position: static; order: -1; }
   .cp-grid { grid-template-columns: 1fr; }
   .cp-side { position: static; }
-  .cp-hero { grid-template-columns: 1fr; }
+  .cp-hero { grid-template-columns: 1fr; min-height: 0; }
   .cp-hero-side { grid-template-rows: none; grid-template-columns: 1fr 1fr; }
+  /* a full-height collage is too tall once it stacks — trim the hero */
+  .cp-hero-main .slot-wrap.hero-slot, .cp-hero-main .ph { min-height: 300px; }
+  .cp-hero-side .slot-wrap { min-height: 130px; }
 }
 @media (max-width: 640px) {
   .dio-stats { grid-template-columns: 1fr 1fr; gap: 10px; padding-left: 16px; padding-right: 16px; }
@@ -660,4 +664,9 @@ textarea.inline-edit-field { line-height: 1.6; resize: vertical; }
   .info-grid { grid-template-columns: 1fr; }
   .gallery { grid-template-columns: repeat(2, 1fr); }
   .gallery .ph.wide { grid-column: span 2; }
+  /* phones: one clean hero image (the side shots still appear in the gallery
+     section below), so the hero doesn't eat the whole screen */
+  .cp-hero-side { display: none; }
+  .cp-hero-main .slot-wrap.hero-slot, .cp-hero-main .ph { min-height: 260px; }
+  .cp-hero-overlay { padding: 20px 18px; }
 }

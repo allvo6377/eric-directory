@@ -1,5 +1,14 @@
 /* directory.jsx — homepage: hero, filters, church list + map (shared via window) */
 
+/* Does this device actually have a hover pointer (mouse/trackpad)? On touch
+   screens hover doesn't exist, and binding onMouseEnter there is harmful: a tap
+   fires a synthetic mouseenter that re-renders the card (setting the "active"
+   highlight) mid-gesture, which swallows the tap's click — so the parish only
+   opens on the SECOND tap. We only wire the hover→map-highlight on real pointers. */
+var CAN_HOVER = !(typeof window !== "undefined" && window.matchMedia)
+  ? true
+  : window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
 /* highlight matched substring within text */
 function highlight(text, q) {
   if (!q) return text;
@@ -106,7 +115,7 @@ function ChurchCard({ c, active, onHover, onOpen, dist, cardStyle, index }) {
     <div
       className={"ch-card " + (active ? "active " : "") + (cardStyle === "soft" ? "softshadow" : "")}
       style={{ "--i": index }}
-      onMouseEnter={() => onHover(c.id)}
+      onMouseEnter={CAN_HOVER ? () => onHover(c.id) : undefined}
       onClick={() => onOpen(c.id)}>
 
       <div className="ch-thumb"><window.Thumb src={c.heroImage || c.images[0]} label={c.gallery[0]} type={c.type} width={200} /></div>
@@ -249,9 +258,6 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
               churches={filtered.filter((c) => c.coords)} activeId={activeId}
               onSelect={setActiveId} onOpen={navigate} userLoc={userLoc} />
           </div>
-          {filtered.some((c) => !c.coords) &&
-          <div className="map-note"><window.I.pin style={{ width: 13, height: 13 }} /> {filtered.filter((c) => !c.coords).length} of {filtered.length} parishes have no map location yet — add coordinates in Admin.</div>
-          }
         </div>
       </div>
     </div>);

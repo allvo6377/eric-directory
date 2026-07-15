@@ -102,7 +102,7 @@ header('Content-Type: text/html; charset=utf-8');
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css?v=7" />
+  <link rel="stylesheet" href="/styles.css?v=8" />
   <style>
     .sp-wrap { max-width: 760px; margin: 0 auto; padding: 28px 24px 64px; }
     .sp-hero { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); background: var(--bg-sink); margin: 18px 0 26px; }
