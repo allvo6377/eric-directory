@@ -6,6 +6,51 @@ Apache/LiteSpeed and PHP. No database is required.
 
 ---
 
+## Quick reference: multiple domains + Git deploy
+
+**The one idea:** every extra domain is an **Alias** onto the *same* `public_html`,
+so there is **one** codebase, **one** Git repo, and **one** deploy that serves
+**all** domains. You set Git up once; a deploy updates every domain at once; the
+`.htaccess` 301-redirects every alias to `https://caap.or.ke`.
+
+```
+edit code → git push (main) → cPanel ▸ Git ▸ Update from Remote → Deploy HEAD Commit
+        └─ .cpanel.yml rsyncs public/ → public_html   (excludes data/ & uploads/)
+                 └─ one docroot serves caap.or.ke AND every Alias domain
+                          └─ .htaccess sends every alias → https://caap.or.ke (301)
+```
+
+**One-time setup**
+
+1. **Domains** — cPanel ▸ **Aliases** (older cPanel: *Parked Domains*) ▸ add each
+   extra domain. Use **Alias**, *never* **Addon** (Addon gets its own folder, so it
+   misses the shared `.htaccess` and your deploys). See §7b.
+2. **SSL** — cPanel ▸ **SSL/TLS Status** ▸ tick **all** domains ▸ **Run AutoSSL**
+   ▸ wait for every row green. (TLS completes before the redirect runs, so each
+   domain needs its own cert.) See §7b.
+3. **Git** — cPanel ▸ **Git™ Version Control** ▸ **Create** ▸ *Clone a Repository*:
+   - Clone URL: `https://github.com/allvo6377/eric-directory.git`
+   - Repository Path: `repositories/eric-directory`
+   - then **Manage ▸ Checked-Out Branch ▸ `main`**. See §8.2.
+
+**Every deploy after that (two clicks — covers all domains)**
+
+cPanel ▸ Git™ Version Control ▸ **Manage** ▸ **Pull or Deploy** ▸
+**Update from Remote** → **Deploy HEAD Commit**.
+
+**Remember**
+
+- **Content** (parishes, text, photos, colors) is edited live at `/#admin` — it
+  needs **no deploy**. Git deploy is only for **code** changes.
+- A deploy **never** touches live `data/` or `uploads/` (excluded in `.cpanel.yml`).
+- After a code change, first: rebuild if you touched `.jsx`
+  (`node scripts/build-js.js`) or `js/data.js` (`node scripts/build-seed.js`),
+  and **bump the `?v=` cache version** in `index.html`. See §8.1.
+
+Full detail: **§7b** (multiple domains) and **§8** (deploying updates).
+
+---
+
 ## 1. What you need
 
 - A Truehost hosting plan with **cPanel** and **PHP 8.0 or newer**
