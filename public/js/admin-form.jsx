@@ -20,7 +20,7 @@ function emptyDraft() {
     description: "", phone: "", email: "", website: "",
     massTimes: [{ day: "Sunday", time: "", language: "English" }],
     officeHours: [], priestName: "", clergy: [], confessions: "", adoration: "",
-    heroImage: "", images: [],
+    events: [], heroImage: "", images: [],
   };
 }
 
@@ -38,8 +38,24 @@ function recordToDraft(c) {
     priestName: c.priest ? c.priest.name : "",
     clergy: (c.clergy || []).map((p) => ({ ...p })),
     confessions: c.confessions || "", adoration: c.adoration || "",
+    events: (c.events || []).map((e) => ({ date: e.date || "", title: e.title || "", time: e.time || "" })),
     heroImage: c.heroImage || "", images: (c.images || []).slice(),
   };
+}
+
+/* an event's stored date may be ISO ("2026-06-08") or a legacy label
+   ("Jun 8"); normalise to yyyy-mm-dd for the <input type="date"> control. */
+const EV_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+function eventISO(d) {
+  if (!d) return "";
+  const s = String(d).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const m = /^([A-Za-z]{3,})\s+(\d{1,2})$/.exec(s);
+  if (m) {
+    const mi = EV_MONTHS.indexOf(m[1].slice(0, 3).toLowerCase());
+    if (mi >= 0) return new Date().getFullYear() + "-" + String(mi + 1).padStart(2, "0") + "-" + String(+m[2]).padStart(2, "0");
+  }
+  return "";
 }
 
 function ParishForm({ church, allDioceses, onClose }) {
@@ -60,6 +76,10 @@ function ParishForm({ church, allDioceses, onClose }) {
   const addClergy = () => set("clergy", [...d.clergy, { name: "", title: "Assistant Priest" }]);
   const setClergy = (i, k, v) => set("clergy", d.clergy.map((m, j) => (j === i ? { ...m, [k]: v } : m)));
   const delClergy = (i) => set("clergy", d.clergy.filter((_, j) => j !== i));
+
+  const addEvent = () => set("events", [...d.events, { date: "", title: "", time: "" }]);
+  const setEvent = (i, k, v) => set("events", d.events.map((m, j) => (j === i ? { ...m, [k]: v } : m)));
+  const delEvent = (i) => set("events", d.events.filter((_, j) => j !== i));
 
   const addImage = () => set("images", [...d.images, ""]);
   const setImage = (i, v) => set("images", d.images.map((m, j) => (j === i ? v : m)));
@@ -117,6 +137,9 @@ function ParishForm({ church, allDioceses, onClose }) {
       priest: d.priestName.trim() ? { name: d.priestName.trim(), title: "Parish Priest" } : null,
       clergy: d.clergy.filter((p) => p.name.trim()).map((p) => ({ name: p.name.trim(), title: p.title || "Assistant Priest" })),
       confessions: d.confessions.trim(), adoration: d.adoration.trim(),
+      events: d.events
+        .map((e) => ({ date: eventISO(e.date) || (e.date || "").trim(), title: (e.title || "").trim(), time: (e.time || "").trim() }))
+        .filter((e) => e.title),
       heroImage: d.heroImage.trim(),
       images: d.images.map((s) => s.trim()).filter(Boolean),
       source: editing ? (church.source || "manual") : "manual",
@@ -124,7 +147,7 @@ function ParishForm({ church, allDioceses, onClose }) {
     if (editing) {
       // preserve rich seed fields not in the form
       rec.tagline = church.tagline; rec.sacraments = church.sacraments;
-      rec.services = church.services; rec.gallery = church.gallery; rec.events = church.events;
+      rec.services = church.services; rec.gallery = church.gallery;
       rec.socials = church.socials;
       window.ParishStore.update(church.id, rec);
     } else {
@@ -234,6 +257,22 @@ function ParishForm({ church, allDioceses, onClose }) {
                 <button className="row-del" onClick={() => delClergy(i)} aria-label="Remove"><window.I.trash style={{ width: 15, height: 15 }} /></button>
               </div>
             ))}
+          </div>
+
+          <div className="form-sec">
+            Upcoming events
+            <button className="add-row" onClick={addEvent}><window.I.plus style={{ width: 14, height: 14 }} /> Add event</button>
+          </div>
+          <div className="row-stack">
+            {d.events.map((e, i) => (
+              <div className="dyn-row event" key={i} style={{ gridTemplateColumns: "150px 1fr 110px 40px" }}>
+                <input type="date" value={eventISO(e.date)} onChange={(ev) => setEvent(i, "date", ev.target.value)} aria-label="Event date" />
+                <input value={e.title} onChange={(ev) => setEvent(i, "title", ev.target.value)} placeholder="e.g. Harvest Mass" aria-label="Event title" />
+                <input value={e.time} onChange={(ev) => setEvent(i, "time", ev.target.value)} placeholder="10:30 AM" aria-label="Event time" />
+                <button className="row-del" onClick={() => delEvent(i)} aria-label="Remove"><window.I.trash style={{ width: 15, height: 15 }} /></button>
+              </div>
+            ))}
+            {d.events.length === 0 && <div className="muted" style={{ fontSize: 13.5 }}>No events added — past dates hide themselves on the parish page.</div>}
           </div>
 
           <div className="form-sec">

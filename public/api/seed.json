@@ -112,23 +112,7 @@
       "https://commons.wikimedia.org/wiki/Special:FilePath/Lascar%20Holy%20Family%20Basilica%20Cathedral%20(4540191843).jpg?width=1100",
       "https://commons.wikimedia.org/wiki/Special:FilePath/Nairobi%20City%20centre%20including%20Basilica.jpg?width=1100"
     ],
-    "events": [
-      {
-        "date": "Jun 8",
-        "title": "Corpus Christi Procession",
-        "time": "10:30 AM"
-      },
-      {
-        "date": "Jun 14",
-        "title": "Parish Charity Harambee",
-        "time": "9:00 AM"
-      },
-      {
-        "date": "Jun 21",
-        "title": "Youth Sunday & Rally",
-        "time": "8:30 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -225,18 +209,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 7",
-        "title": "Marian Vigil & Rosary",
-        "time": "6:00 PM"
-      },
-      {
-        "date": "Jun 20",
-        "title": "Consolata Feast Novena",
-        "time": "5:30 PM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -333,18 +306,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 15",
-        "title": "Parish Family Day",
-        "time": "10:00 AM"
-      },
-      {
-        "date": "Jun 28",
-        "title": "St. Augustine Talk Series",
-        "time": "4:00 PM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -445,18 +407,7 @@
       "https://commons.wikimedia.org/wiki/Special:FilePath/Holy%20Ghost%20RC%20cathedral%20in%20Mombasa.jpg?width=1100",
       "https://commons.wikimedia.org/wiki/Special:FilePath/Holy%20Ghost%20Cathedral%20Mombasa.JPG?width=1100"
     ],
-    "events": [
-      {
-        "date": "Jun 12",
-        "title": "Sea Sunday Blessing",
-        "time": "9:00 AM"
-      },
-      {
-        "date": "Jun 22",
-        "title": "Archdiocesan Choir Festival",
-        "time": "2:00 PM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -553,18 +504,7 @@
     ],
     "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/St-Therese-of-Lisieux-Cathedral-RC-Archdiocese-of-Kisumu-Kenya.jpg?width=1400",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 9",
-        "title": "Diocesan Catechists' Day",
-        "time": "10:00 AM"
-      },
-      {
-        "date": "Jun 25",
-        "title": "Lake Region Youth Mass",
-        "time": "9:00 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -661,18 +601,7 @@
     ],
     "heroImage": "https://commons.wikimedia.org/wiki/Special:FilePath/Nyeri%20katedral.jpg?width=1400",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 10",
-        "title": "Blessed Nyaatha Memorial Mass",
-        "time": "10:00 AM"
-      },
-      {
-        "date": "Jun 24",
-        "title": "Highland Deanery Gathering",
-        "time": "9:30 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -769,18 +698,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 11",
-        "title": "Feast of the Sacred Heart",
-        "time": "9:00 AM"
-      },
-      {
-        "date": "Jun 26",
-        "title": "Diocesan Family Day",
-        "time": "10:00 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -877,18 +795,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 13",
-        "title": "Student Chaplaincy Mass",
-        "time": "11:00 AM"
-      },
-      {
-        "date": "Jun 27",
-        "title": "North Rift Vocations Day",
-        "time": "9:00 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -985,18 +892,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 16",
-        "title": "Harvest Thanksgiving Mass",
-        "time": "9:00 AM"
-      },
-      {
-        "date": "Jun 29",
-        "title": "Catechists' Commissioning",
-        "time": "10:00 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -1093,18 +989,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 18",
-        "title": "Lourdes Rosary Procession",
-        "time": "5:00 PM"
-      },
-      {
-        "date": "Jun 30",
-        "title": "Ukambani Deanery Day",
-        "time": "9:30 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -1204,18 +1089,7 @@
       "https://commons.wikimedia.org/wiki/Special:FilePath/KC%20W%20Facade%20Evening.jpg?width=1100",
       "https://commons.wikimedia.org/wiki/Special:FilePath/Kericho%20Cathedral-JamiiForum.png?width=1100"
     ],
-    "events": [
-      {
-        "date": "Jun 17",
-        "title": "St. Joseph Workers' Mass",
-        "time": "9:00 AM"
-      },
-      {
-        "date": "Jul 1",
-        "title": "Tea Region Youth Camp",
-        "time": "8:00 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   },
   {
@@ -1312,18 +1186,7 @@
     ],
     "heroImage": "",
     "images": [],
-    "events": [
-      {
-        "date": "Jun 19",
-        "title": "Workers' Rosary Evening",
-        "time": "5:30 PM"
-      },
-      {
-        "date": "Jul 2",
-        "title": "Diocesan Catholic Action Day",
-        "time": "9:00 AM"
-      }
-    ],
+    "events": [],
     "source": "seed"
   }
 ]

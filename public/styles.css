@@ -415,6 +415,20 @@ image-slot { display: block; width: 100%; height: 100%; }
   .mass-edit-row select:first-child { grid-column: 1 / -1; }
 }
 
+/* inline events editor (parish page, admin) */
+.event-edit { display: flex; flex-direction: column; gap: 9px; }
+.event-edit-row { display: grid; grid-template-columns: 150px 1fr 108px 40px; gap: 8px; align-items: center; }
+.event-edit-row input {
+  width: 100%; border: 1px solid var(--line-2); border-radius: 9px;
+  padding: 9px 10px; font-family: inherit; font-size: 14px; color: var(--ink); background: var(--bg);
+}
+.event-edit-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.event-edit .add-row { align-self: flex-start; margin-top: 2px; }
+@media (max-width: 560px) {
+  .event-edit-row { grid-template-columns: 1fr 1fr 40px; }
+  .event-edit-row input:nth-child(2) { grid-column: 1 / -1; }
+}
+
 /* mass times table */
 .mass-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .mass-row {

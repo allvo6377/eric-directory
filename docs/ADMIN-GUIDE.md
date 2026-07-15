@@ -50,11 +50,22 @@ except the name:
 - **Mass & service times** — one row per Mass: day, time, language.
   *Add time* for more rows. Confession and Adoration have their own fields.
 - **Office hours**, **Clergy** — add rows the same way.
+- **Upcoming events** — one row per event: pick a **date**, a **title**
+  (e.g. "Harvest Thanksgiving Mass") and a **time**. *Add event* for more rows.
+  Events with a date in the past **hide themselves automatically** on the
+  parish page, so an old event you forget to delete simply disappears once the
+  day passes — you don't have to clean the list up by hand.
 - **Photos** — see §6.
 - **Description** — a paragraph about the parish. If left blank, a simple
   sentence is generated automatically.
 
 **Save changes** — the edit is live for every visitor immediately.
+
+**Quicker: edit right on the parish page.** While signed in, open any parish's
+public page and you can edit in place — click the **name** or **description** to
+type over it, and the **Mass & service times** and **Upcoming events** sections
+turn into small editors (add / change / remove rows) that save as you go. It's
+the same data as the form; use whichever is handier.
 
 ## 4. Editing the site's own text and branding
 
@@ -129,6 +140,8 @@ placeholders** (fake addresses end in `.example`). Before going live:
 1. Import or enter your verified data (§3, §5).
 2. Delete or correct every sample entry you haven't verified —
    or use **Reset to sample** *only* if you want to start over from the samples.
+3. The **Upcoming events** calendar starts empty on every parish — add real
+   events as they're scheduled (§3). Nothing shows there until you do.
 
 ## 9. Safety notes
 

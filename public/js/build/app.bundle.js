@@ -1419,6 +1419,33 @@ function Frame({
    (add / edit / remove rows) for signed-in admins. */
 const MASS_DAYS = ["Sunday", "Weekdays", "Daily", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Public Holidays"];
 const MASS_LANGS = ["", "English", "Swahili", "Kikuyu", "Kimeru", "Kamba", "Kipsigis", "Latin", "Children's"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/* parse an event date: ISO "2026-06-08" (from the admin date picker) or a
+   legacy "Jun 8" label. Returns a Date at local midnight, or null. */
+function eventDate(d) {
+  if (!d) return null;
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d).trim());
+  if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
+  const legacy = new Date(String(d).trim() + " " + new Date().getFullYear());
+  return isNaN(legacy.getTime()) ? null : legacy;
+}
+/* upcoming events only (today onward + any undated), soonest first */
+function upcomingEvents(events) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return (events || []).map(e => ({
+    e,
+    d: eventDate(e.date)
+  })).filter(x => !x.d || x.d >= today).sort((a, b) => (a.d ? a.d.getTime() : Infinity) - (b.d ? b.d.getTime() : Infinity));
+}
+/* yyyy-mm-dd for the native <input type="date"> control */
+function toISODate(d) {
+  const dt = eventDate(d);
+  if (!dt) return "";
+  const p = n => String(n).padStart(2, "0");
+  return dt.getFullYear() + "-" + p(dt.getMonth() + 1) + "-" + p(dt.getDate());
+}
 function MassTimes({
   church: c,
   admin,
@@ -1527,6 +1554,131 @@ function MassTimes({
       height: 14
     }
   }), " Add Mass time"));
+}
+
+/* Upcoming events — a dated calendar list for visitors (past events hide
+   themselves), an inline editor (date / title / time; add & remove) for admins. */
+function Events({
+  church: c,
+  admin
+}) {
+  const [rows, setRows] = React.useState(() => (c.events || []).map(e => ({
+    ...e
+  })));
+  React.useEffect(() => {
+    setRows((c.events || []).map(e => ({
+      ...e
+    })));
+  }, [c.id]);
+  function persist(next) {
+    window.ParishStore.update(c.id, {
+      events: next.filter(e => (e.title || "").trim())
+    });
+  }
+  const setLocal = (i, k, v) => setRows(r => r.map((e, j) => j === i ? {
+    ...e,
+    [k]: v
+  } : e));
+  const saveField = (i, k, v) => {
+    const next = rows.map((e, j) => j === i ? {
+      ...e,
+      [k]: v
+    } : e);
+    setRows(next);
+    persist(next);
+  };
+  const addRow = () => setRows(r => [...r, {
+    date: "",
+    title: "",
+    time: ""
+  }]);
+  const delRow = i => {
+    const next = rows.filter((_, j) => j !== i);
+    setRows(next);
+    persist(next);
+  };
+  if (!admin) {
+    const up = upcomingEvents(c.events);
+    if (!up.length) return null;
+    return /*#__PURE__*/React.createElement("div", null, up.map(({
+      e,
+      d
+    }, i) => /*#__PURE__*/React.createElement("div", {
+      className: "event-row",
+      key: i
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "event-date"
+    }, d ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      className: "ed-mo"
+    }, MONTHS[d.getMonth()]), /*#__PURE__*/React.createElement("div", {
+      className: "ed-day"
+    }, d.getDate())) : /*#__PURE__*/React.createElement("div", {
+      className: "ed-mo"
+    }, "TBA")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "ev-title"
+    }, e.title), e.time ? /*#__PURE__*/React.createElement("div", {
+      className: "ev-time"
+    }, /*#__PURE__*/React.createElement(window.I.clock, {
+      style: {
+        width: 13,
+        height: 13,
+        verticalAlign: "-2px",
+        marginRight: 4
+      }
+    }), e.time) : null))));
+  }
+
+  // admin — editable
+  return /*#__PURE__*/React.createElement("div", {
+    className: "event-edit"
+  }, rows.map((e, i) => /*#__PURE__*/React.createElement("div", {
+    className: "event-edit-row",
+    key: i
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: toISODate(e.date),
+    onChange: ev => saveField(i, "date", ev.target.value),
+    "aria-label": "Event date"
+  }), /*#__PURE__*/React.createElement("input", {
+    value: e.title,
+    onChange: ev => setLocal(i, "title", ev.target.value),
+    onBlur: () => persist(rows),
+    placeholder: "Event title",
+    "aria-label": "Event title"
+  }), /*#__PURE__*/React.createElement("input", {
+    value: e.time,
+    onChange: ev => setLocal(i, "time", ev.target.value),
+    onBlur: () => persist(rows),
+    placeholder: "10:30 AM",
+    "aria-label": "Event time"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "row-del",
+    onClick: () => delRow(i),
+    "aria-label": "Remove event"
+  }, /*#__PURE__*/React.createElement(window.I.trash, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  })))), rows.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 13.5,
+      marginBottom: 8
+    }
+  }, "No events yet \u2014 add upcoming parish events below."), /*#__PURE__*/React.createElement("button", {
+    className: "add-row",
+    onClick: addRow
+  }, /*#__PURE__*/React.createElement(window.I.plus, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " Add event"));
 }
 function ChurchPage({
   church: c,
@@ -1797,7 +1949,7 @@ function ChurchPage({
     className: "cn"
   }, p.name), /*#__PURE__*/React.createElement("div", {
     className: "ct"
-  }, p.title)))))), c.events.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, p.title)))))), (admin || upcomingEvents(c.events).length > 0) && /*#__PURE__*/React.createElement("div", {
     className: "section",
     style: {
       "--i": si++,
@@ -1805,34 +1957,10 @@ function ChurchPage({
     }
   }, /*#__PURE__*/React.createElement("h2", null, "Upcoming events"), /*#__PURE__*/React.createElement("div", {
     className: "sec-sub"
-  }, "Parish calendar highlights."), /*#__PURE__*/React.createElement("div", null, c.events.map((e, i) => {
-    const [mo, day] = (e.date || "").split(" ");
-    return /*#__PURE__*/React.createElement("div", {
-      className: "event-row",
-      key: i
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "event-date"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "ed-mo"
-    }, mo), /*#__PURE__*/React.createElement("div", {
-      className: "ed-day"
-    }, day)), /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "ev-title"
-    }, e.title), /*#__PURE__*/React.createElement("div", {
-      className: "ev-time"
-    }, /*#__PURE__*/React.createElement(window.I.clock, {
-      style: {
-        width: 13,
-        height: 13,
-        verticalAlign: "-2px",
-        marginRight: 4
-      }
-    }), e.time)));
-  })))), /*#__PURE__*/React.createElement("aside", {
+  }, admin ? "Post parish events with a date, title and time — past dates hide themselves automatically." : "Parish calendar highlights."), /*#__PURE__*/React.createElement(Events, {
+    church: c,
+    admin: admin
+  }))), /*#__PURE__*/React.createElement("aside", {
     className: "cp-side"
   }, /*#__PURE__*/React.createElement("div", {
     className: "side-card"
@@ -2176,6 +2304,7 @@ function emptyDraft() {
     clergy: [],
     confessions: "",
     adoration: "",
+    events: [],
     heroImage: "",
     images: []
   };
@@ -2214,9 +2343,29 @@ function recordToDraft(c) {
     })),
     confessions: c.confessions || "",
     adoration: c.adoration || "",
+    events: (c.events || []).map(e => ({
+      date: e.date || "",
+      title: e.title || "",
+      time: e.time || ""
+    })),
     heroImage: c.heroImage || "",
     images: (c.images || []).slice()
   };
+}
+
+/* an event's stored date may be ISO ("2026-06-08") or a legacy label
+   ("Jun 8"); normalise to yyyy-mm-dd for the <input type="date"> control. */
+const EV_MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+function eventISO(d) {
+  if (!d) return "";
+  const s = String(d).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const m = /^([A-Za-z]{3,})\s+(\d{1,2})$/.exec(s);
+  if (m) {
+    const mi = EV_MONTHS.indexOf(m[1].slice(0, 3).toLowerCase());
+    if (mi >= 0) return new Date().getFullYear() + "-" + String(mi + 1).padStart(2, "0") + "-" + String(+m[2]).padStart(2, "0");
+  }
+  return "";
 }
 function ParishForm({
   church,
@@ -2260,6 +2409,16 @@ function ParishForm({
     [k]: v
   } : m));
   const delClergy = i => set("clergy", d.clergy.filter((_, j) => j !== i));
+  const addEvent = () => set("events", [...d.events, {
+    date: "",
+    title: "",
+    time: ""
+  }]);
+  const setEvent = (i, k, v) => set("events", d.events.map((m, j) => j === i ? {
+    ...m,
+    [k]: v
+  } : m));
+  const delEvent = i => set("events", d.events.filter((_, j) => j !== i));
   const addImage = () => set("images", [...d.images, ""]);
   const setImage = (i, v) => set("images", d.images.map((m, j) => j === i ? v : m));
   const delImage = i => set("images", d.images.filter((_, j) => j !== i));
@@ -2359,6 +2518,11 @@ function ParishForm({
       })),
       confessions: d.confessions.trim(),
       adoration: d.adoration.trim(),
+      events: d.events.map(e => ({
+        date: eventISO(e.date) || (e.date || "").trim(),
+        title: (e.title || "").trim(),
+        time: (e.time || "").trim()
+      })).filter(e => e.title),
       heroImage: d.heroImage.trim(),
       images: d.images.map(s => s.trim()).filter(Boolean),
       source: editing ? church.source || "manual" : "manual"
@@ -2369,7 +2533,6 @@ function ParishForm({
       rec.sacraments = church.sacraments;
       rec.services = church.services;
       rec.gallery = church.gallery;
-      rec.events = church.events;
       rec.socials = church.socials;
       window.ParishStore.update(church.id, rec);
     } else {
@@ -2678,6 +2841,53 @@ function ParishForm({
       height: 15
     }
   }))))), /*#__PURE__*/React.createElement("div", {
+    className: "form-sec"
+  }, "Upcoming events", /*#__PURE__*/React.createElement("button", {
+    className: "add-row",
+    onClick: addEvent
+  }, /*#__PURE__*/React.createElement(window.I.plus, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " Add event")), /*#__PURE__*/React.createElement("div", {
+    className: "row-stack"
+  }, d.events.map((e, i) => /*#__PURE__*/React.createElement("div", {
+    className: "dyn-row event",
+    key: i,
+    style: {
+      gridTemplateColumns: "150px 1fr 110px 40px"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: eventISO(e.date),
+    onChange: ev => setEvent(i, "date", ev.target.value),
+    "aria-label": "Event date"
+  }), /*#__PURE__*/React.createElement("input", {
+    value: e.title,
+    onChange: ev => setEvent(i, "title", ev.target.value),
+    placeholder: "e.g. Harvest Mass",
+    "aria-label": "Event title"
+  }), /*#__PURE__*/React.createElement("input", {
+    value: e.time,
+    onChange: ev => setEvent(i, "time", ev.target.value),
+    placeholder: "10:30 AM",
+    "aria-label": "Event time"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "row-del",
+    onClick: () => delEvent(i),
+    "aria-label": "Remove"
+  }, /*#__PURE__*/React.createElement(window.I.trash, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  })))), d.events.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 13.5
+    }
+  }, "No events added \u2014 past dates hide themselves on the parish page.")), /*#__PURE__*/React.createElement("div", {
     className: "form-sec"
   }, "Photos", /*#__PURE__*/React.createElement("div", {
     style: {

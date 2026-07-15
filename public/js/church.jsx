@@ -38,6 +38,32 @@ function Frame({ id, src, label, className, admin, type, art }) {
    (add / edit / remove rows) for signed-in admins. */
 const MASS_DAYS = ["Sunday", "Weekdays", "Daily", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Public Holidays"];
 const MASS_LANGS = ["", "English", "Swahili", "Kikuyu", "Kimeru", "Kamba", "Kipsigis", "Latin", "Children's"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/* parse an event date: ISO "2026-06-08" (from the admin date picker) or a
+   legacy "Jun 8" label. Returns a Date at local midnight, or null. */
+function eventDate(d) {
+  if (!d) return null;
+  const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d).trim());
+  if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
+  const legacy = new Date(String(d).trim() + " " + new Date().getFullYear());
+  return isNaN(legacy.getTime()) ? null : legacy;
+}
+/* upcoming events only (today onward + any undated), soonest first */
+function upcomingEvents(events) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return (events || [])
+    .map((e) => ({ e, d: eventDate(e.date) }))
+    .filter((x) => !x.d || x.d >= today)
+    .sort((a, b) => (a.d ? a.d.getTime() : Infinity) - (b.d ? b.d.getTime() : Infinity));
+}
+/* yyyy-mm-dd for the native <input type="date"> control */
+function toISODate(d) {
+  const dt = eventDate(d);
+  if (!dt) return "";
+  const p = (n) => String(n).padStart(2, "0");
+  return dt.getFullYear() + "-" + p(dt.getMonth() + 1) + "-" + p(dt.getDate());
+}
 
 function MassTimes({ church: c, admin, navigate }) {
   const [rows, setRows] = React.useState(() => (c.massTimes || []).map((m) => ({ ...m })));
@@ -84,6 +110,59 @@ function MassTimes({ church: c, admin, navigate }) {
         </div>
       ))}
       <button className="add-row" onClick={addRow}><window.I.plus style={{ width: 14, height: 14 }} /> Add Mass time</button>
+    </div>
+  );
+}
+
+/* Upcoming events — a dated calendar list for visitors (past events hide
+   themselves), an inline editor (date / title / time; add & remove) for admins. */
+function Events({ church: c, admin }) {
+  const [rows, setRows] = React.useState(() => (c.events || []).map((e) => ({ ...e })));
+  React.useEffect(() => { setRows((c.events || []).map((e) => ({ ...e }))); }, [c.id]);
+
+  function persist(next) {
+    window.ParishStore.update(c.id, { events: next.filter((e) => (e.title || "").trim()) });
+  }
+  const setLocal = (i, k, v) => setRows((r) => r.map((e, j) => (j === i ? { ...e, [k]: v } : e)));
+  const saveField = (i, k, v) => { const next = rows.map((e, j) => (j === i ? { ...e, [k]: v } : e)); setRows(next); persist(next); };
+  const addRow = () => setRows((r) => [...r, { date: "", title: "", time: "" }]);
+  const delRow = (i) => { const next = rows.filter((_, j) => j !== i); setRows(next); persist(next); };
+
+  if (!admin) {
+    const up = upcomingEvents(c.events);
+    if (!up.length) return null;
+    return (
+      <div>
+        {up.map(({ e, d }, i) => (
+          <div className="event-row" key={i}>
+            <div className="event-date">
+              {d
+                ? <React.Fragment><div className="ed-mo">{MONTHS[d.getMonth()]}</div><div className="ed-day">{d.getDate()}</div></React.Fragment>
+                : <div className="ed-mo">TBA</div>}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div className="ev-title">{e.title}</div>
+              {e.time ? <div className="ev-time"><window.I.clock style={{ width: 13, height: 13, verticalAlign: "-2px", marginRight: 4 }} />{e.time}</div> : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // admin — editable
+  return (
+    <div className="event-edit">
+      {rows.map((e, i) => (
+        <div className="event-edit-row" key={i}>
+          <input type="date" value={toISODate(e.date)} onChange={(ev) => saveField(i, "date", ev.target.value)} aria-label="Event date" />
+          <input value={e.title} onChange={(ev) => setLocal(i, "title", ev.target.value)} onBlur={() => persist(rows)} placeholder="Event title" aria-label="Event title" />
+          <input value={e.time} onChange={(ev) => setLocal(i, "time", ev.target.value)} onBlur={() => persist(rows)} placeholder="10:30 AM" aria-label="Event time" />
+          <button className="row-del" onClick={() => delRow(i)} aria-label="Remove event"><window.I.trash style={{ width: 15, height: 15 }} /></button>
+        </div>
+      ))}
+      {rows.length === 0 && <div className="muted" style={{ fontSize: 13.5, marginBottom: 8 }}>No events yet — add upcoming parish events below.</div>}
+      <button className="add-row" onClick={addRow}><window.I.plus style={{ width: 14, height: 14 }} /> Add event</button>
     </div>
   );
 }
@@ -235,24 +314,11 @@ function ChurchPage({ church: c, navigate, admin }) {
             </div>
           )}
 
-          {c.events.length > 0 && (
+          {(admin || upcomingEvents(c.events).length > 0) && (
             <div className="section" style={{ "--i": si++, marginBottom: 0 }}>
               <h2>Upcoming events</h2>
-              <div className="sec-sub">Parish calendar highlights.</div>
-              <div>
-                {c.events.map((e, i) => {
-                  const [mo, day] = (e.date || "").split(" ");
-                  return (
-                    <div className="event-row" key={i}>
-                      <div className="event-date"><div className="ed-mo">{mo}</div><div className="ed-day">{day}</div></div>
-                      <div style={{ flex: 1 }}>
-                        <div className="ev-title">{e.title}</div>
-                        <div className="ev-time"><window.I.clock style={{ width: 13, height: 13, verticalAlign: "-2px", marginRight: 4 }} />{e.time}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <div className="sec-sub">{admin ? "Post parish events with a date, title and time — past dates hide themselves automatically." : "Parish calendar highlights."}</div>
+              <Events church={c} admin={admin} />
             </div>
           )}
         </div>

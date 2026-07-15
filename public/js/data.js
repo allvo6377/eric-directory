@@ -45,11 +45,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick", "Adoration"],
     services: ["Daily Adoration Chapel", "Charismatic Renewal", "Choir & Music Ministry", "Catholic Men & Women Associations"],
     gallery: ["basilica exterior & tower", "main nave & altar", "stained-glass clerestory", "Sunday congregation"],
-    events: [
-      { date: "Jun 8", title: "Corpus Christi Procession", time: "10:30 AM" },
-      { date: "Jun 14", title: "Parish Charity Harambee", time: "9:00 AM" },
-      { date: "Jun 21", title: "Youth Sunday & Rally", time: "8:30 AM" },
-    ],
+    events: [],
   },
   {
     id: "consolata-shrine",
@@ -87,10 +83,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Marian Devotions", "Rosary Groups", "Mission Animation", "Youth Fellowship"],
     gallery: ["shrine entrance", "Marian grotto", "altar & sanctuary", "evening devotion"],
-    events: [
-      { date: "Jun 7", title: "Marian Vigil & Rosary", time: "6:00 PM" },
-      { date: "Jun 20", title: "Consolata Feast Novena", time: "5:30 PM" },
-    ],
+    events: [],
   },
   {
     id: "st-austins-parish",
@@ -128,10 +121,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Catholic Education Outreach", "Small Christian Communities", "Choir", "Caritas Charity Desk"],
     gallery: ["historic stone church", "parish gardens", "sanctuary", "first communion class"],
-    events: [
-      { date: "Jun 15", title: "Parish Family Day", time: "10:00 AM" },
-      { date: "Jun 28", title: "St. Augustine Talk Series", time: "4:00 PM" },
-    ],
+    events: [],
   },
   {
     id: "holy-ghost-cathedral-mombasa",
@@ -169,10 +159,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Port Chaplaincy", "Swahili Choir", "Catholic Women Association", "Youth Ministry"],
     gallery: ["cathedral towers", "main aisle", "sanctuary & altar", "coastal parish life"],
-    events: [
-      { date: "Jun 12", title: "Sea Sunday Blessing", time: "9:00 AM" },
-      { date: "Jun 22", title: "Archdiocesan Choir Festival", time: "2:00 PM" },
-    ],
+    events: [],
   },
   {
     id: "st-teresas-cathedral-kisumu",
@@ -210,10 +197,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Small Christian Communities", "Cathedral Choir", "Catholic Youth Network", "Charity & Outreach"],
     gallery: ["cathedral front", "interior nave", "altar", "lakeside community"],
-    events: [
-      { date: "Jun 9", title: "Diocesan Catechists' Day", time: "10:00 AM" },
-      { date: "Jun 25", title: "Lake Region Youth Mass", time: "9:00 AM" },
-    ],
+    events: [],
   },
   {
     id: "consolata-cathedral-nyeri",
@@ -251,10 +235,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Nyaatha Pilgrimage Desk", "Cathedral Choir", "Catholic Men Association", "Catechesis"],
     gallery: ["highland cathedral", "memorial chapel", "sanctuary", "pilgrims at prayer"],
-    events: [
-      { date: "Jun 10", title: "Blessed Nyaatha Memorial Mass", time: "10:00 AM" },
-      { date: "Jun 24", title: "Highland Deanery Gathering", time: "9:30 AM" },
-    ],
+    events: [],
   },
   {
     id: "christ-the-king-nakuru",
@@ -292,10 +273,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Rift Valley Chaplaincy", "Cathedral Choir", "Youth Ministry", "Caritas Nakuru"],
     gallery: ["cathedral exterior", "main nave", "altar & sanctuary", "parish community"],
-    events: [
-      { date: "Jun 11", title: "Feast of the Sacred Heart", time: "9:00 AM" },
-      { date: "Jun 26", title: "Diocesan Family Day", time: "10:00 AM" },
-    ],
+    events: [],
   },
   {
     id: "sacred-heart-eldoret",
@@ -333,10 +311,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["University Chaplaincy", "Cathedral Choir", "Catholic Students Association", "Outreach Ministry"],
     gallery: ["cathedral front", "interior", "altar", "student congregation"],
-    events: [
-      { date: "Jun 13", title: "Student Chaplaincy Mass", time: "11:00 AM" },
-      { date: "Jun 27", title: "North Rift Vocations Day", time: "9:00 AM" },
-    ],
+    events: [],
   },
   {
     id: "consolata-cathedral-meru",
@@ -374,10 +349,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Catechist Training", "Cathedral Choir", "Catholic Women Association", "Agricultural Cooperative Desk"],
     gallery: ["cathedral exterior", "nave", "sanctuary", "harvest thanksgiving"],
-    events: [
-      { date: "Jun 16", title: "Harvest Thanksgiving Mass", time: "9:00 AM" },
-      { date: "Jun 29", title: "Catechists' Commissioning", time: "10:00 AM" },
-    ],
+    events: [],
   },
   {
     id: "our-lady-lourdes-machakos",
@@ -415,10 +387,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Marian Devotions", "Cathedral Choir", "Caritas Machakos", "Small Christian Communities"],
     gallery: ["cathedral front", "Lourdes grotto", "altar", "parish gathering"],
-    events: [
-      { date: "Jun 18", title: "Lourdes Rosary Procession", time: "5:00 PM" },
-      { date: "Jun 30", title: "Ukambani Deanery Day", time: "9:30 AM" },
-    ],
+    events: [],
   },
   {
     id: "st-josephs-kericho",
@@ -456,10 +425,7 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Workers' Chaplaincy", "Cathedral Choir", "Catholic Men Association", "Youth Ministry"],
     gallery: ["cathedral exterior", "tea-highland setting", "sanctuary", "Sunday assembly"],
-    events: [
-      { date: "Jun 17", title: "St. Joseph Workers' Mass", time: "9:00 AM" },
-      { date: "Jul 1", title: "Tea Region Youth Camp", time: "8:00 AM" },
-    ],
+    events: [],
   },
   {
     id: "our-lady-help-thika",
@@ -497,9 +463,6 @@ window.CHURCHES = [
     sacraments: ["Baptism", "Reconciliation", "Holy Eucharist", "Confirmation", "Holy Matrimony", "Anointing of the Sick"],
     services: ["Industrial Chaplaincy", "Cathedral Choir", "Catholic Women Association", "Caritas Thika"],
     gallery: ["cathedral facade", "main nave", "altar", "town parish life"],
-    events: [
-      { date: "Jun 19", title: "Workers' Rosary Evening", time: "5:30 PM" },
-      { date: "Jul 2", title: "Diocesan Catholic Action Day", time: "9:00 AM" },
-    ],
+    events: [],
   },
 ];

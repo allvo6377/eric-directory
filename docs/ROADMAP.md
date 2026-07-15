@@ -20,7 +20,7 @@ Effort: **S** = hours, **M** = a few days, **L** = a week or more.
 | # | Suggestion | Why | Effort |
 |---|---|---|---|
 | 6 | **"Mass near me now"** — combine geolocation with parsed Mass times to answer "where can I attend the next Mass?" | Turns the directory from reference into a daily-use tool; the data is already structured (day/time/language) | M |
-| 7 | **Events calendar** — upgrade the per-parish events list to real dates with an all-parishes calendar view + iCal feed | Feasts, harambees, confirmations; drives repeat visits | M |
+| 7 | **Events calendar** — per-parish events are now real, dated and admin-editable (date picker + auto-hide of past events, on the parish page and in the form) ✅. *Remaining:* an all-parishes calendar view + iCal feed | Feasts, harambees, confirmations; drives repeat visits | M |
 | 8 | **Swahili UI toggle** — the site-content system already externalizes copy; add a second language set and a switcher | Serves the actual congregation better | M |
 | 9 | **Printable parish page / QR poster** — print stylesheet + a QR code linking to the parish page | Parishes pin these on notice boards; free marketing loop | S |
 | 10 | **Diocese/deanery landing pages** with their own editable intro text (reuse the site-content mechanism per diocese) | Dioceses will want to own their section's voice | M |
