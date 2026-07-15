@@ -28,6 +28,8 @@ const I = {
   warn: (p) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M10.3 3.8 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>,
   download: (p) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M21 15v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3M7 10l5 5 5-5M12 15V3"/></svg>,
   reset: (p) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>,
+  chart: (p) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 20V4M4 20h16M8 16v-4M13 16V8M18 16v-6"/></svg>,
+  history: (p) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 3v5h5M3.5 9a9 9 0 1 0 2-3.3L3 8"/><path d="M12 8v4.5l3 1.6"/></svg>,
 };
 
 /* ---------- branded default church illustration ----------
@@ -110,6 +112,64 @@ function nextSunday(massTimes) {
   const s = massTimes.find((m) => m.day === "Sunday");
   return s ? s : massTimes[0];
 }
+
+/* ---- "next Mass" scheduling (powers the Mass-near-me finder) ---- */
+const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+/* which weekday indices (0=Sun) a day-label covers; [] = not schedulable */
+function dayIndices(dayLabel) {
+  const d = (dayLabel || "").toLowerCase().trim();
+  if (/weekday/.test(d)) return [1, 2, 3, 4, 5];
+  if (/daily|every ?day/.test(d)) return [0, 1, 2, 3, 4, 5, 6];
+  if (/^sun/.test(d)) return [0];
+  if (/^mon/.test(d)) return [1];
+  if (/^tue/.test(d)) return [2];
+  if (/^wed/.test(d)) return [3];
+  if (/^thu/.test(d)) return [4];
+  if (/^fri/.test(d)) return [5];
+  if (/^sat/.test(d)) return [6];
+  return []; // "Public Holidays" / unknown — can't be placed on a calendar
+}
+/* minutes-since-midnight for "7:00 AM", "6.30pm", "18:00", "7am" (or null) */
+function parseTimeMinutes(t) {
+  if (!t) return null;
+  const m = /(\d{1,2})(?:[:.](\d{2}))?\s*(a\.?m\.?|p\.?m\.?)?/i.exec(String(t));
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const min = m[2] ? parseInt(m[2], 10) : 0;
+  const ap = (m[3] || "").toLowerCase().replace(/\./g, "");
+  if (ap === "pm" && h < 12) h += 12;
+  if (ap === "am" && h === 12) h = 0;
+  if (h > 23 || min > 59) return null;
+  return h * 60 + min;
+}
+/* soonest upcoming Mass from `now` across all day/time rows, or null */
+function nextMass(massTimes, now) {
+  now = now || new Date();
+  let best = null;
+  (massTimes || []).forEach((m) => {
+    const mins = parseTimeMinutes(m.time);
+    if (mins == null) return;
+    dayIndices(m.day).forEach((wd) => {
+      const when = new Date(now);
+      when.setHours(0, 0, 0, 0);
+      when.setDate(when.getDate() + ((wd - now.getDay() + 7) % 7));
+      when.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+      if (when.getTime() <= now.getTime()) when.setDate(when.getDate() + 7); // today but passed → next week
+      if (!best || when.getTime() < best.when.getTime()) {
+        best = { when: when, time: m.time, language: m.language || "", day: m.day };
+      }
+    });
+  });
+  return best;
+}
+/* human label for a next-Mass time: "Today 5:30 PM" / "Tomorrow 7:00 AM" / "Sun 8:00 AM" */
+function massWhenLabel(nm, now) {
+  now = now || new Date();
+  const today = new Date(now); today.setHours(0, 0, 0, 0);
+  const dayDiff = Math.round((new Date(nm.when).setHours(0, 0, 0, 0) - today.getTime()) / 86400000);
+  const prefix = dayDiff === 0 ? "Today" : dayDiff === 1 ? "Tomorrow" : WEEKDAY_NAMES[nm.when.getDay()].slice(0, 3);
+  return prefix + " · " + (nm.time || "");
+}
 function initials(name) {
   // Fr. John Mwangi -> JM
   const parts = name.replace(/Rev\.?|Fr\.?|Sr\.?|Msgr\.?|,.*$/g, "").trim().split(/\s+/);
@@ -186,4 +246,4 @@ function EditableText({ value, onSave, admin, tag = "div", className = "", multi
   );
 }
 
-Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, churchArt, churchArtURI, EditableText, haversine, nextSunday, initials, uniqueSorted });
+Object.assign(window, { I, PH, Slot, Thumb, thumbUrl, churchArt, churchArtURI, EditableText, haversine, nextSunday, nextMass, massWhenLabel, initials, uniqueSorted });

@@ -148,6 +148,15 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
   const [userLoc, setUserLoc] = React.useState(null);
   const [activeId, setActiveId] = React.useState(null);
   const [geoState, setGeoState] = React.useState("idle");
+  const [finderOpen, setFinderOpen] = React.useState(false);
+
+  // record settled search terms (1.2s after typing stops) for privacy-light analytics
+  React.useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) return;
+    const t = setTimeout(() => { if (window.Analytics) window.Analytics.search(q); }, 1200);
+    return () => clearTimeout(t);
+  }, [query]);
 
   const dioceses = React.useMemo(() => ["All", ...window.uniqueSorted(all.map((c) => c.diocese))], [all]);
   const languages = React.useMemo(() => ["All", ...window.uniqueSorted(all.flatMap((c) => c.massTimes.map((m) => m.language)))], [all]);
@@ -230,6 +239,9 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
           <button className={"btn " + (nearest ? "btn-primary" : "btn-ghost")} onClick={findNearest}>
             <window.I.loc /> {geoState === "locating" ? "Locating…" : "Nearest to me"}
           </button>
+          <button className="btn btn-soft mass-now-btn" onClick={() => setFinderOpen(true)}>
+            <window.I.clock style={{ width: 15, height: 15 }} /> Next Mass near me
+          </button>
         </div>
       </div>
 
@@ -260,6 +272,8 @@ function DirectoryView({ navigate, tweaks, mode, parishes }) {
           </div>
         </div>
       </div>
+
+      {finderOpen && <window.MassFinderModal parishes={all} userLoc={userLoc} navigate={navigate} onClose={() => setFinderOpen(false)} />}
     </div>);
 
 }

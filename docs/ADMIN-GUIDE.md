@@ -29,8 +29,11 @@ you out.
 - **The parish table** — search box + diocese/source filters. Click a parish name
   to view its public page; use the pencil to **edit**, the bin to **delete**.
 - **Action buttons** (top right):
+  - **Suggestions** — visitor-submitted corrections (see §7)
+  - **Analytics** — what visitors search for and which parishes they open (see §9)
+  - **Activity log** — a record of every change made in the admin (see §10)
   - **Site settings** — edit the site's own text, logo, colors (see §4)
-  - **Auto-fill photos** — fetch parish photos from Wikimedia Commons (see §6)
+  - **Find locations** / **Auto-fill photos** — fill in coordinates / photos (see §6)
   - **Import CSV** — bulk-add parishes from a spreadsheet (see §5)
   - **Add parish** — create one parish with the full form
   - **Sign out**
@@ -49,6 +52,9 @@ except the name:
 - **Contact** — phone, email, website.
 - **Mass & service times** — one row per Mass: day, time, language.
   *Add time* for more rows. Confession and Adoration have their own fields.
+  Accurate day + time here (plus coordinates) also power the visitor-facing
+  **“Next Mass near me”** finder on the directory, which ranks parishes by the
+  soonest upcoming Mass — so keep these current.
 - **Office hours**, **Clergy** — add rows the same way.
 - **Upcoming events** — one row per event: pick a **date**, a **title**
   (e.g. "Harvest Thanksgiving Mass") and a **time**. *Add event* for more rows.
@@ -131,7 +137,30 @@ outdated Mass times or wrong contacts — nothing changes on the site until you 
 - Spam protection is built in (hidden trap field + a limit of 5 submissions per
   hour per connection), so the queue stays manageable.
 
-## 8. Replacing the sample data (important, before launch)
+## 8. Analytics — what visitors look for
+
+**Admin → Analytics** shows two simple lists built from real visitor activity:
+
+- **Top searches** — the words people type into the search box (e.g. a spike in
+  “karen” or “mass swahili” tells you what to add or verify next).
+- **Most-viewed parishes** — which parish pages get opened most.
+
+It's deliberately **privacy-light**: only running totals are stored — **no
+cookies, no IP addresses, no per-person history**, nothing that identifies a
+visitor. Your own browsing while signed in is **not** counted, so the numbers
+reflect real visitors. Counting starts the first day the feature is live.
+
+## 9. Activity log — who changed what
+
+**Admin → Activity log** is a running record of every change made through the
+admin: parishes added, edited (with which fields changed), deleted, imported or
+reset; site-settings saves; sign-ins; and password changes. Each line shows the
+time and the connection's IP address. Edited/added parishes are click-through —
+tap one to jump straight to its page. It's your safety net for “wait, what
+changed?” and for confirming a teammate's edits. The log can't be altered from
+the app (there's no delete button) — it only appends.
+
+## 10. Replacing the sample data (important, before launch)
 
 The site ships with 12 sample parishes. Their names, dioceses and locations are
 real, but **Mass times, phone numbers, emails and clergy names are illustrative
@@ -143,7 +172,7 @@ placeholders** (fake addresses end in `.example`). Before going live:
 3. The **Upcoming events** calendar starts empty on every parish — add real
    events as they're scheduled (§3). Nothing shows there until you do.
 
-## 9. Safety notes
+## 11. Safety notes
 
 - Deleting a parish can't be undone (except by re-entering it or restoring a backup).
 - **Reset to sample** wipes *all* your edits and restores the original 12 samples —

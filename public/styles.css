@@ -493,6 +493,28 @@ image-slot { display: block; width: 100%; height: 100%; }
 .event-row .ev-title { font-weight: 600; font-size: 15px; }
 .event-row .ev-time { font-size: 13px; color: var(--ink-3); }
 
+/* "Mass near me now" finder */
+.mass-finder .mf-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.mf-geo { display: flex; align-items: center; gap: 7px; font-size: 13px; }
+.mf-tabs { display: inline-flex; border: 1px solid var(--line-2); border-radius: 999px; padding: 3px; gap: 2px; background: var(--bg-soft); }
+.mf-tab { border: none; background: transparent; padding: 6px 14px; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink-3); cursor: pointer; }
+.mf-tab.on { background: var(--primary); color: #fff; }
+.mf-list { display: flex; flex-direction: column; gap: 8px; }
+.mf-row { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); cursor: pointer; font: inherit; transition: border-color .14s, box-shadow .14s, transform .12s; }
+.mf-row:hover { border-color: var(--primary); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.mf-rank { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); font-weight: 700; font-size: 13px; }
+.mf-info { flex: 1; min-width: 0; }
+.mf-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mf-sub { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mf-right { flex: none; text-align: right; }
+.mf-when { font-weight: 700; font-size: 13.5px; color: var(--primary); }
+.mf-meta { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 4px; }
+.mf-dist { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: var(--ink-3); }
+@media (max-width: 560px) {
+  .mf-sub { display: none; }
+  .mf-row { gap: 10px; padding: 11px 12px; }
+}
+
 /* footer */
 .foot {
   border-top: 1px solid var(--line); background: var(--bg-soft); margin-top: auto;

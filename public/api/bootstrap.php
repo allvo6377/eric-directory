@@ -110,6 +110,49 @@ function save_json_file(string $path, $data): void {
     if (!rename($tmp, $path)) { @unlink($tmp); fail('Could not save data file.', 500); }
 }
 
+/* ---------------- audit log (append-only, admin accountability) ----------
+ * Every admin content change appends one JSON line to data/audit.log (kept
+ * out of the webroot by data/.htaccess). Newest entries are read back by
+ * api/audit.php for the in-app Activity log. */
+const AUDIT_FILE = DATA_DIR . '/audit.log';
+const AUDIT_KEEP = 4000;   // trim to this many lines when the file grows large
+
+function audit_log(string $action, string $target = '', string $detail = ''): void {
+    $entry = [
+        't'      => date('c'),
+        'action' => $action,
+        'target' => mb_substr($target, 0, 140),
+        'detail' => mb_substr($detail, 0, 400),
+        // a short IP is useful accountability with a single shared admin login;
+        // it never leaves the server (data/ is web-denied)
+        'ip'     => substr((string)($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45),
+    ];
+    $line = json_encode($entry, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    if ($line === false) return;
+    if (!is_dir(DATA_DIR)) @mkdir(DATA_DIR, 0755, true);
+    @file_put_contents(AUDIT_FILE, $line . "\n", FILE_APPEND | LOCK_EX);
+    // occasional trim so the log can't grow without bound
+    if (is_file(AUDIT_FILE) && @filesize(AUDIT_FILE) > 1024 * 1024) {
+        $lines = @file(AUDIT_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (is_array($lines) && count($lines) > AUDIT_KEEP) {
+            $keep = implode("\n", array_slice($lines, -AUDIT_KEEP)) . "\n";
+            $tmp = AUDIT_FILE . '.tmp.' . bin2hex(random_bytes(4));
+            if (@file_put_contents($tmp, $keep, LOCK_EX) !== false) @rename($tmp, AUDIT_FILE);
+        }
+    }
+}
+
+/** newest-first audit entries (for the admin viewer) */
+function read_audit(int $limit = 250): array {
+    if (!is_file(AUDIT_FILE)) return [];
+    $lines = @file(AUDIT_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if (!is_array($lines)) return [];
+    $lines = array_slice($lines, -max(1, $limit));
+    $out = [];
+    foreach ($lines as $l) { $d = json_decode($l, true); if (is_array($d)) $out[] = $d; }
+    return array_reverse($out);
+}
+
 /* ---------------- parish normalization (mirror of js/store.js) ---------------- */
 function slugify(string $s): string {
     $s = strtolower(trim($s));

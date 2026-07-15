@@ -169,6 +169,8 @@ function Events({ church: c, admin }) {
 
 function ChurchPage({ church: c, navigate, admin }) {
   React.useEffect(() => { window.scrollTo(0, 0); }, [c.id]);
+  // privacy-light view counter (skips admin sessions internally)
+  React.useEffect(() => { if (!admin && window.Analytics) window.Analytics.view(c.id); }, [c.id, admin]);
   const [suggestOpen, setSuggestOpen] = React.useState(false);
   const [shareMsg, setShareMsg] = React.useState("");
 

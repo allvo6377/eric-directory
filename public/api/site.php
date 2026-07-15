@@ -66,6 +66,7 @@ $content = is_array($body['content'] ?? null) ? $body['content'] : null;
 if ($content === null) fail('content object is required.');
 
 $site = load_site();
+$changed = [];
 foreach (SITE_KEYS as $k) {
     if (!array_key_exists($k, $content)) continue;
     $v = $content[$k];
@@ -73,8 +74,11 @@ foreach (SITE_KEYS as $k) {
     $v = trim((string)$v);
     if (mb_strlen($v) > 2000) $v = mb_substr($v, 0, 2000);
     if ($k === 'primaryColor' && $v !== '' && !preg_match('/^#[0-9a-fA-F]{6}$/', $v)) continue;
-    $site[$k] = $v !== '' ? $v : site_defaults()[$k];
+    $newVal = $v !== '' ? $v : site_defaults()[$k];
+    if (($site[$k] ?? null) !== $newVal) $changed[] = $k;
+    $site[$k] = $newVal;
 }
 
 save_json_file(data_path('site.json'), $site);
+if ($changed) audit_log('site.settings', '', 'Updated: ' . implode(', ', $changed));
 json_out(['ok' => true, 'site' => $site]);

@@ -10,6 +10,8 @@ function AdminView({ navigate, parishes }) {
   const [locating, setLocating] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
+  const [activityOpen, setActivityOpen] = React.useState(false);
+  const [analyticsOpen, setAnalyticsOpen] = React.useState(false);
   const [pendingSuggestions, setPendingSuggestions] = React.useState(0);
 
   const refreshSuggestionCount = React.useCallback(() => {
@@ -84,6 +86,8 @@ function AdminView({ navigate, parishes }) {
             <button className="btn btn-ghost" onClick={() => setSuggestionsOpen(true)}>
               <window.I.mail /> Suggestions{pendingSuggestions > 0 && <span className="sg-badge">{pendingSuggestions}</span>}
             </button>
+            <button className="btn btn-ghost" onClick={() => setAnalyticsOpen(true)}><window.I.chart /> Analytics</button>
+            <button className="btn btn-ghost" onClick={() => setActivityOpen(true)}><window.I.history /> Activity log</button>
             <button className="btn btn-ghost" onClick={() => setSettingsOpen(true)}><window.I.gear /> Site settings</button>
             <button className="btn btn-ghost" onClick={() => setLocating(true)}><window.I.pin /> Find locations</button>
             <button className="btn btn-ghost" onClick={() => setAutofilling(true)}><window.I.globe /> Auto-fill photos</button>
@@ -164,6 +168,8 @@ function AdminView({ navigate, parishes }) {
       {locating && <window.LocateModal parishes={all} onClose={onLocateClose} />}
       {settingsOpen && <window.SiteSettingsModal onClose={onSettingsClose} />}
       {suggestionsOpen && <window.SuggestionsModal navigate={navigate} onClose={() => { setSuggestionsOpen(false); refreshSuggestionCount(); }} />}
+      {analyticsOpen && <window.AnalyticsModal navigate={navigate} onClose={() => setAnalyticsOpen(false)} />}
+      {activityOpen && <window.ActivityLogModal navigate={navigate} onClose={() => setActivityOpen(false)} />}
 
       {deleteTarget && (
         <div className="modal-overlay" onMouseDown={() => setDeleteTarget(null)}>

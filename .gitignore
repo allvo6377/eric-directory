@@ -1,6 +1,7 @@
 # Runtime data written by the PHP API — never commit live content or the
 # admin password hash. Fresh deployments seed themselves from api/seed.json.
 public/data/*.json
+public/data/*.log
 
 # Admin-uploaded images (live content, not source)
 public/uploads/*

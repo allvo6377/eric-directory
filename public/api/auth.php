@@ -90,6 +90,7 @@ switch ($action) {
         rate_clear();
         session_regenerate_id(true);
         $_SESSION['ecclesia_admin'] = true;
+        audit_log('auth.login', '', 'Admin signed in');
         json_out(['ok' => true]);
         break;
     }
@@ -116,6 +117,7 @@ switch ($action) {
         $cfg['password_hash'] = password_hash($next, PASSWORD_DEFAULT);
         $cfg['updated_at'] = date('c');
         save_json_file(data_path('admin.json'), $cfg);
+        audit_log('auth.password_change', '', 'Admin password changed');
         json_out(['ok' => true]);
         break;
     }

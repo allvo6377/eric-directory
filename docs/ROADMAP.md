@@ -13,13 +13,13 @@ Effort: **S** = hours, **M** = a few days, **L** = a week or more.
 | 2 | **Photo credits/attribution field** per image | Wikimedia Commons photos are CC-BY-SA — a small caption ("Photo: A. Author, CC BY-SA") displayed on the gallery satisfies the license cleanly | S |
 | 3 | ~~**SEO & sharing tags**~~ ✅ **DONE** — server-rendered `/p/<id>` pages with OG + schema.org CatholicChurch data, live `sitemap.xml`, `robots.txt`, canonical/OG on the homepage, Share button in the app | Parishes findable on Google; WhatsApp previews | — |
 | 4 | ~~**"Suggest an update" button**~~ ✅ **DONE** — public form (honeypot + rate limit) → admin Suggestions queue with resolve/delete | Crowdsourced corrections, no edit rights given away | — |
-| 5 | **Audit log** (`data/audit.log`: timestamp + action + parish id) | Cheap accountability and debugging for content changes | S |
+| 5 | ~~**Audit log**~~ ✅ **DONE** — every admin change (parish add/edit/delete/import/reset, site settings, sign-in, password change) is appended to `data/audit.log` with time + action + target + IP, and shown in **Admin → Activity log** (newest first, edited parishes are click-through) | Cheap accountability and debugging for content changes | — |
 
 ## Product features
 
 | # | Suggestion | Why | Effort |
 |---|---|---|---|
-| 6 | **"Mass near me now"** — combine geolocation with parsed Mass times to answer "where can I attend the next Mass?" | Turns the directory from reference into a daily-use tool; the data is already structured (day/time/language) | M |
+| 6 | ~~**"Mass near me now"**~~ ✅ **DONE** — the **Next Mass near me** button geolocates the visitor and ranks parishes by the soonest upcoming Mass (all days parsed, not just Sunday; past times roll forward), with a Soonest/Nearest toggle and distances | Turns the directory from reference into a daily-use tool | — |
 | 7 | **Events calendar** — per-parish events are now real, dated and admin-editable (date picker + auto-hide of past events, on the parish page and in the form) ✅. *Remaining:* an all-parishes calendar view + iCal feed | Feasts, harambees, confirmations; drives repeat visits | M |
 | 8 | **Swahili UI toggle** — the site-content system already externalizes copy; add a second language set and a switcher | Serves the actual congregation better | M |
 | 9 | **Printable parish page / QR poster** — print stylesheet + a QR code linking to the parish page | Parishes pin these on notice boards; free marketing loop | S |
@@ -34,7 +34,7 @@ Effort: **S** = hours, **M** = a few days, **L** = a week or more.
 | 13 | **Scheduled off-site backups** — cPanel cron: nightly zip of `data/` + `uploads/` emailed or pushed to Google Drive | Protects live content beyond manual backups | S |
 | 14 | **Image optimization pass on the server** (GD re-encode + thumbnail sizes) | Serve 92px thumbs on cards instead of the 1600px hero; snappier lists on mobile data | M |
 | 15 | **Progressive Web App** (manifest + service worker caching the shell & data) | "Install" on phones; browsing works offline after first visit — valuable with intermittent connectivity | M |
-| 16 | **Analytics** (self-hosted Plausible/GoatCounter or Truehost's AWStats) | Learn what people search for; informs which parishes need data attention | S |
+| 16 | ~~**Analytics**~~ ✅ **DONE** — built-in privacy-light counters (no cookies, no IPs, no personal data): searches and parish views are tallied server-side and shown in **Admin → Analytics** (top searches + most-viewed parishes). Admin's own browsing isn't counted. External tools (Plausible/AWStats) remain optional | Learn what people search for; informs which parishes need data attention | — |
 
 ## Longer-term
 

@@ -378,6 +378,32 @@ const I = {
     strokeLinejoin: "round"
   }, p), /*#__PURE__*/React.createElement("path", {
     d: "M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"
+  })),
+  chart: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M4 20V4M4 20h16M8 16v-4M13 16V8M18 16v-6"
+  })),
+  history: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M3 3v5h5M3.5 9a9 9 0 1 0 2-3.3L3 8"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 8v4.5l3 1.6"
   }))
 };
 
@@ -462,6 +488,70 @@ function nextSunday(massTimes) {
   if (!massTimes || !massTimes.length) return null;
   const s = massTimes.find(m => m.day === "Sunday");
   return s ? s : massTimes[0];
+}
+
+/* ---- "next Mass" scheduling (powers the Mass-near-me finder) ---- */
+const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+/* which weekday indices (0=Sun) a day-label covers; [] = not schedulable */
+function dayIndices(dayLabel) {
+  const d = (dayLabel || "").toLowerCase().trim();
+  if (/weekday/.test(d)) return [1, 2, 3, 4, 5];
+  if (/daily|every ?day/.test(d)) return [0, 1, 2, 3, 4, 5, 6];
+  if (/^sun/.test(d)) return [0];
+  if (/^mon/.test(d)) return [1];
+  if (/^tue/.test(d)) return [2];
+  if (/^wed/.test(d)) return [3];
+  if (/^thu/.test(d)) return [4];
+  if (/^fri/.test(d)) return [5];
+  if (/^sat/.test(d)) return [6];
+  return []; // "Public Holidays" / unknown — can't be placed on a calendar
+}
+/* minutes-since-midnight for "7:00 AM", "6.30pm", "18:00", "7am" (or null) */
+function parseTimeMinutes(t) {
+  if (!t) return null;
+  const m = /(\d{1,2})(?:[:.](\d{2}))?\s*(a\.?m\.?|p\.?m\.?)?/i.exec(String(t));
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const min = m[2] ? parseInt(m[2], 10) : 0;
+  const ap = (m[3] || "").toLowerCase().replace(/\./g, "");
+  if (ap === "pm" && h < 12) h += 12;
+  if (ap === "am" && h === 12) h = 0;
+  if (h > 23 || min > 59) return null;
+  return h * 60 + min;
+}
+/* soonest upcoming Mass from `now` across all day/time rows, or null */
+function nextMass(massTimes, now) {
+  now = now || new Date();
+  let best = null;
+  (massTimes || []).forEach(m => {
+    const mins = parseTimeMinutes(m.time);
+    if (mins == null) return;
+    dayIndices(m.day).forEach(wd => {
+      const when = new Date(now);
+      when.setHours(0, 0, 0, 0);
+      when.setDate(when.getDate() + (wd - now.getDay() + 7) % 7);
+      when.setHours(Math.floor(mins / 60), mins % 60, 0, 0);
+      if (when.getTime() <= now.getTime()) when.setDate(when.getDate() + 7); // today but passed → next week
+      if (!best || when.getTime() < best.when.getTime()) {
+        best = {
+          when: when,
+          time: m.time,
+          language: m.language || "",
+          day: m.day
+        };
+      }
+    });
+  });
+  return best;
+}
+/* human label for a next-Mass time: "Today 5:30 PM" / "Tomorrow 7:00 AM" / "Sun 8:00 AM" */
+function massWhenLabel(nm, now) {
+  now = now || new Date();
+  const today = new Date(now);
+  today.setHours(0, 0, 0, 0);
+  const dayDiff = Math.round((new Date(nm.when).setHours(0, 0, 0, 0) - today.getTime()) / 86400000);
+  const prefix = dayDiff === 0 ? "Today" : dayDiff === 1 ? "Tomorrow" : WEEKDAY_NAMES[nm.when.getDay()].slice(0, 3);
+  return prefix + " · " + (nm.time || "");
 }
 function initials(name) {
   // Fr. John Mwangi -> JM
@@ -616,6 +706,8 @@ Object.assign(window, {
   EditableText,
   haversine,
   nextSunday,
+  nextMass,
+  massWhenLabel,
   initials,
   uniqueSorted
 });
@@ -1041,6 +1133,17 @@ function DirectoryView({
   const [userLoc, setUserLoc] = React.useState(null);
   const [activeId, setActiveId] = React.useState(null);
   const [geoState, setGeoState] = React.useState("idle");
+  const [finderOpen, setFinderOpen] = React.useState(false);
+
+  // record settled search terms (1.2s after typing stops) for privacy-light analytics
+  React.useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) return;
+    const t = setTimeout(() => {
+      if (window.Analytics) window.Analytics.search(q);
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [query]);
   const dioceses = React.useMemo(() => ["All", ...window.uniqueSorted(all.map(c => c.diocese))], [all]);
   const languages = React.useMemo(() => ["All", ...window.uniqueSorted(all.flatMap(c => c.massTimes.map(m => m.language)))], [all]);
   const filtered = React.useMemo(() => {
@@ -1151,7 +1254,15 @@ function DirectoryView({
   }, /*#__PURE__*/React.createElement(window.I.chev, null))), /*#__PURE__*/React.createElement("button", {
     className: "btn " + (nearest ? "btn-primary" : "btn-ghost"),
     onClick: findNearest
-  }, /*#__PURE__*/React.createElement(window.I.loc, null), " ", geoState === "locating" ? "Locating…" : "Nearest to me"))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(window.I.loc, null), " ", geoState === "locating" ? "Locating…" : "Nearest to me"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-soft mass-now-btn",
+    onClick: () => setFinderOpen(true)
+  }, /*#__PURE__*/React.createElement(window.I.clock, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  }), " Next Mass near me"))), /*#__PURE__*/React.createElement("div", {
     className: "dir-body " + layout
   }, /*#__PURE__*/React.createElement("div", {
     className: "list-col"
@@ -1198,7 +1309,12 @@ function DirectoryView({
     onSelect: setActiveId,
     onOpen: navigate,
     userLoc: userLoc
-  })))));
+  })))), finderOpen && /*#__PURE__*/React.createElement(window.MassFinderModal, {
+    parishes: all,
+    userLoc: userLoc,
+    navigate: navigate,
+    onClose: () => setFinderOpen(false)
+  }));
 }
 Object.assign(window, {
   DirectoryView
@@ -1688,6 +1804,10 @@ function ChurchPage({
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, [c.id]);
+  // privacy-light view counter (skips admin sessions internally)
+  React.useEffect(() => {
+    if (!admin && window.Analytics) window.Analytics.view(c.id);
+  }, [c.id, admin]);
   const [suggestOpen, setSuggestOpen] = React.useState(false);
   const [shareMsg, setShareMsg] = React.useState("");
 
@@ -2252,6 +2372,191 @@ function FSuggestField({
 }
 Object.assign(window, {
   SuggestModal
+});
+})();
+
+/* ======== mass-finder.jsx ======== */
+;(function () {
+/* mass-finder.jsx — "Mass near me now": combines the visitor's location with
+   the parsed Mass schedule to answer "where's the next Mass I can get to?".
+   Exports window.MassFinderModal. */
+
+const NAIROBI_CBD = {
+  lat: -1.28637,
+  lng: 36.81724
+};
+function MassFinderModal({
+  parishes,
+  userLoc: initialLoc,
+  onClose,
+  navigate
+}) {
+  const [loc, setLoc] = React.useState(initialLoc || null);
+  const [geo, setGeo] = React.useState(initialLoc ? "ok" : "locating");
+  const [sortBy, setSortBy] = React.useState("soonest"); // "soonest" | "nearest"
+  const now = React.useMemo(() => new Date(), []);
+
+  // geolocate on open (unless the directory already had a fix), with the same
+  // guard timer used elsewhere so "Locating…" can never hang forever
+  React.useEffect(() => {
+    if (loc) return;
+    if (!navigator.geolocation) {
+      setLoc(NAIROBI_CBD);
+      setGeo("fallback");
+      return;
+    }
+    let settled = false;
+    const settle = (l, g) => {
+      if (settled) return;
+      settled = true;
+      setLoc(l);
+      setGeo(g);
+    };
+    const guard = setTimeout(() => settle(NAIROBI_CBD, "fallback"), 8000);
+    navigator.geolocation.getCurrentPosition(pos => {
+      clearTimeout(guard);
+      settle({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      }, "ok");
+    }, () => {
+      clearTimeout(guard);
+      settle(NAIROBI_CBD, "fallback");
+    }, {
+      timeout: 6000
+    });
+    return () => clearTimeout(guard);
+  }, []);
+  const results = React.useMemo(() => {
+    const rows = [];
+    (parishes || []).forEach(c => {
+      const nm = window.nextMass(c.massTimes, now);
+      if (!nm) return;
+      const dist = loc && c.coords ? window.haversine(loc, c.coords) : null;
+      rows.push({
+        c: c,
+        nm: nm,
+        dist: dist
+      });
+    });
+    rows.sort((a, b) => {
+      if (sortBy === "nearest") {
+        const da = a.dist == null ? Infinity : a.dist,
+          db = b.dist == null ? Infinity : b.dist;
+        if (da !== db) return da - db;
+        return a.nm.when - b.nm.when;
+      }
+      if (a.nm.when.getTime() !== b.nm.when.getTime()) return a.nm.when - b.nm.when;
+      const da = a.dist == null ? Infinity : a.dist,
+        db = b.dist == null ? Infinity : b.dist;
+      return da - db;
+    });
+    return rows.slice(0, 24);
+  }, [parishes, loc, sortBy, now]);
+  const fmtDist = d => d == null ? null : d < 1 ? "<1 km" : Math.round(d) + " km";
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay",
+    onMouseDown: () => onClose()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal modal-import mass-finder",
+    onMouseDown: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-head"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "modal-kicker"
+  }, "Next Mass near you"), /*#__PURE__*/React.createElement("h2", null, "When & where is the next Mass?")), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn",
+    onClick: () => onClose(),
+    "aria-label": "Close"
+  }, /*#__PURE__*/React.createElement(window.I.cross, {
+    style: {
+      width: 18,
+      height: 18,
+      transform: "rotate(45deg)"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mf-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mf-geo muted"
+  }, geo === "locating" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    className: "spinner",
+    style: {
+      width: 13,
+      height: 13
+    }
+  }), " Finding your location\u2026"), geo === "ok" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(window.I.route, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " Ranked from your location"), geo === "fallback" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(window.I.pin, {
+    style: {
+      width: 14,
+      height: 14
+    }
+  }), " Location off \u2014 distances shown from Nairobi CBD")), /*#__PURE__*/React.createElement("div", {
+    className: "mf-tabs"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mf-tab" + (sortBy === "soonest" ? " on" : ""),
+    onClick: () => setSortBy("soonest")
+  }, "Soonest"), /*#__PURE__*/React.createElement("button", {
+    className: "mf-tab" + (sortBy === "nearest" ? " on" : ""),
+    onClick: () => setSortBy("nearest")
+  }, "Nearest"))), results.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty"
+  }, "No upcoming Masses could be scheduled \u2014 parishes need day & time entries (e.g. \u201CSunday 7:00 AM\u201D) for this to work."), /*#__PURE__*/React.createElement("div", {
+    className: "mf-list"
+  }, results.map(({
+    c,
+    nm,
+    dist
+  }, i) => /*#__PURE__*/React.createElement("button", {
+    className: "mf-row",
+    key: c.id,
+    onClick: () => {
+      onClose();
+      navigate(c.id);
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mf-rank"
+  }, i + 1), /*#__PURE__*/React.createElement("div", {
+    className: "mf-info"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mf-name"
+  }, c.name), /*#__PURE__*/React.createElement("div", {
+    className: "mf-sub"
+  }, [c.city, c.diocese].filter(Boolean).join(" · "))), /*#__PURE__*/React.createElement("div", {
+    className: "mf-right"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mf-when"
+  }, window.massWhenLabel(nm, now)), /*#__PURE__*/React.createElement("div", {
+    className: "mf-meta"
+  }, nm.language ? /*#__PURE__*/React.createElement("span", {
+    className: "chip chip-lang"
+  }, nm.language) : null, fmtDist(dist) ? /*#__PURE__*/React.createElement("span", {
+    className: "mf-dist"
+  }, /*#__PURE__*/React.createElement(window.I.pin, {
+    style: {
+      width: 12,
+      height: 12
+    }
+  }), " ", fmtDist(dist)) : null)))))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-foot"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 12.5,
+      marginRight: "auto"
+    }
+  }, "Based on listed Mass times \u2014 confirm with the parish before travelling."), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onClose()
+  }, "Done"))));
+}
+Object.assign(window, {
+  MassFinderModal
 });
 })();
 
@@ -4186,6 +4491,317 @@ Object.assign(window, {
 });
 })();
 
+/* ======== admin-analytics.jsx ======== */
+;(function () {
+/* admin-analytics.jsx — privacy-light usage dashboard (top searches + most-viewed
+   parishes). Exports window.AnalyticsModal. Data from api/analytics.php. */
+
+function AnalyticsModal({
+  navigate,
+  onClose
+}) {
+  const [data, setData] = React.useState(null); // null = loading
+  const [err, setErr] = React.useState("");
+  React.useEffect(() => {
+    fetch("api/analytics.php", {
+      credentials: "same-origin"
+    }).then(r => r.json()).then(j => {
+      if (j && j.ok) setData(j);else setErr(j && j.error || "Could not load analytics.");
+    }).catch(() => setErr("Could not load analytics."));
+  }, []);
+  const searches = data && data.searches || [];
+  const views = data && data.views || [];
+  const totals = data && data.totals || {};
+  const maxS = searches.reduce((m, s) => Math.max(m, s.count), 0) || 1;
+  const maxV = views.reduce((m, v) => Math.max(m, v.count), 0) || 1;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay",
+    onMouseDown: () => onClose()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal modal-import",
+    onMouseDown: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-head"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "modal-kicker"
+  }, "Privacy-light analytics"), /*#__PURE__*/React.createElement("h2", null, "What visitors look for")), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn",
+    onClick: () => onClose(),
+    "aria-label": "Close"
+  }, /*#__PURE__*/React.createElement(window.I.cross, {
+    style: {
+      width: 18,
+      height: 18,
+      transform: "rotate(45deg)"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body"
+  }, err && /*#__PURE__*/React.createElement("div", {
+    className: "form-error"
+  }, /*#__PURE__*/React.createElement(window.I.warn, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  }), " ", err), data === null && !err && /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      padding: "18px 4px"
+    }
+  }, "Loading\u2026"), data !== null && !err && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "an-totals"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-tot"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-num"
+  }, totals.searches || 0), /*#__PURE__*/React.createElement("div", {
+    className: "an-lbl"
+  }, "Searches")), /*#__PURE__*/React.createElement("div", {
+    className: "an-tot"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-num"
+  }, totals.views || 0), /*#__PURE__*/React.createElement("div", {
+    className: "an-lbl"
+  }, "Parish views")), /*#__PURE__*/React.createElement("div", {
+    className: "an-tot"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-num"
+  }, totals.distinctSearches || 0), /*#__PURE__*/React.createElement("div", {
+    className: "an-lbl"
+  }, "Distinct terms"))), /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 12.5,
+      margin: "2px 0 14px"
+    }
+  }, "Aggregate counts only \u2014 no cookies, no IP addresses, no personal data. Collecting since ", data.since, ". Your own admin browsing isn\u2019t counted."), /*#__PURE__*/React.createElement("div", {
+    className: "an-cols"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-sec",
+    style: {
+      marginTop: 0
+    }
+  }, "Top searches"), searches.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      margin: "6px 0"
+    }
+  }, "No searches recorded yet."), searches.map((s, i) => /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-row",
+    key: i
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-label",
+    title: s.q
+  }, s.q), /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-track"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-bar",
+    style: {
+      width: Math.max(6, Math.round(s.count / maxS * 100)) + "%"
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-count"
+  }, s.count)))), /*#__PURE__*/React.createElement("div", {
+    className: "an-col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-sec",
+    style: {
+      marginTop: 0
+    }
+  }, "Most-viewed parishes"), views.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty",
+    style: {
+      margin: "6px 0"
+    }
+  }, "No parish views recorded yet."), views.map((v, i) => /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-row",
+    key: i
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-label"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#" + v.parishId,
+    onClick: e => {
+      e.preventDefault();
+      onClose();
+      navigate(v.parishId);
+    }
+  }, v.name)), /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-track"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "an-bar an-bar-alt",
+    style: {
+      width: Math.max(6, Math.round(v.count / maxV * 100)) + "%"
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "an-bar-count"
+  }, v.count))))))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-foot"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onClose()
+  }, "Done"))));
+}
+Object.assign(window, {
+  AnalyticsModal
+});
+})();
+
+/* ======== admin-audit.jsx ======== */
+;(function () {
+/* admin-audit.jsx — read-only Activity log of admin changes.
+   Exports window.ActivityLogModal. Data comes from api/audit.php. */
+
+const AUDIT_LABELS = {
+  "parish.add": {
+    label: "Added parish",
+    kind: "add"
+  },
+  "parish.edit": {
+    label: "Edited parish",
+    kind: "edit"
+  },
+  "parish.delete": {
+    label: "Deleted parish",
+    kind: "del"
+  },
+  "parish.import": {
+    label: "Imported parishes",
+    kind: "add"
+  },
+  "parish.reset": {
+    label: "Reset to sample",
+    kind: "del"
+  },
+  "site.settings": {
+    label: "Site settings",
+    kind: "edit"
+  },
+  "auth.login": {
+    label: "Signed in",
+    kind: "auth"
+  },
+  "auth.password_change": {
+    label: "Password changed",
+    kind: "auth"
+  }
+};
+function auditWhen(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso || "";
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  const time = d.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+  if (sameDay) return "Today " + time;
+  const yst = new Date(now);
+  yst.setDate(now.getDate() - 1);
+  if (d.toDateString() === yst.toDateString()) return "Yesterday " + time;
+  return d.toLocaleDateString([], {
+    day: "numeric",
+    month: "short"
+  }) + ", " + time;
+}
+function ActivityLogModal({
+  navigate,
+  onClose
+}) {
+  const [entries, setEntries] = React.useState(null); // null = loading
+  const [err, setErr] = React.useState("");
+  React.useEffect(() => {
+    fetch("api/audit.php?limit=300", {
+      credentials: "same-origin"
+    }).then(r => r.json()).then(j => {
+      if (j && j.ok) setEntries(j.entries || []);else setErr(j && j.error || "Could not load the activity log.");
+    }).catch(() => setErr("Could not load the activity log."));
+  }, []);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay",
+    onMouseDown: () => onClose()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal modal-import",
+    onMouseDown: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-head"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "modal-kicker"
+  }, "Accountability"), /*#__PURE__*/React.createElement("h2", null, "Activity log")), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn",
+    onClick: () => onClose(),
+    "aria-label": "Close"
+  }, /*#__PURE__*/React.createElement(window.I.cross, {
+    style: {
+      width: 18,
+      height: 18,
+      transform: "rotate(45deg)"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body"
+  }, err && /*#__PURE__*/React.createElement("div", {
+    className: "form-error"
+  }, /*#__PURE__*/React.createElement(window.I.warn, {
+    style: {
+      width: 15,
+      height: 15
+    }
+  }), " ", err), entries === null && !err && /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      padding: "18px 4px"
+    }
+  }, "Loading\u2026"), entries !== null && entries.length === 0 && /*#__PURE__*/React.createElement("div", {
+    className: "empty"
+  }, "No activity recorded yet. Every parish edit, import, settings change and sign-in will appear here."), entries !== null && entries.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "audit-list"
+  }, entries.map((e, i) => {
+    const meta = AUDIT_LABELS[e.action] || {
+      label: e.action,
+      kind: "edit"
+    };
+    const target = e.detail || e.target || "";
+    const clickable = /^parish\.(add|edit)$/.test(e.action) && e.target;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "audit-row",
+      key: i
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "audit-tag audit-" + meta.kind
+    }, meta.label), /*#__PURE__*/React.createElement("div", {
+      className: "audit-main"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "audit-detail"
+    }, clickable ? /*#__PURE__*/React.createElement("a", {
+      href: "#" + e.target,
+      onClick: ev => {
+        ev.preventDefault();
+        onClose();
+        navigate(e.target);
+      }
+    }, target) : target || /*#__PURE__*/React.createElement("span", {
+      className: "muted"
+    }, "\u2014")), /*#__PURE__*/React.createElement("div", {
+      className: "audit-when"
+    }, auditWhen(e.t), e.ip ? " · " + e.ip : "")));
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "modal-foot"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "muted",
+    style: {
+      fontSize: 12.5,
+      marginRight: "auto"
+    }
+  }, "Newest first \xB7 last 300 events"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onClose()
+  }, "Done"))));
+}
+Object.assign(window, {
+  ActivityLogModal
+});
+})();
+
 /* ======== admin-login.jsx ======== */
 ;(function () {
 /* admin-login.jsx — sign-in gate for the admin area. Exports window.AdminLogin.
@@ -4297,6 +4913,8 @@ function AdminView({
   const [locating, setLocating] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
+  const [activityOpen, setActivityOpen] = React.useState(false);
+  const [analyticsOpen, setAnalyticsOpen] = React.useState(false);
   const [pendingSuggestions, setPendingSuggestions] = React.useState(0);
   const refreshSuggestionCount = React.useCallback(() => {
     fetch("api/suggestions.php", {
@@ -4388,6 +5006,12 @@ function AdminView({
   }, /*#__PURE__*/React.createElement(window.I.mail, null), " Suggestions", pendingSuggestions > 0 && /*#__PURE__*/React.createElement("span", {
     className: "sg-badge"
   }, pendingSuggestions)), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: () => setAnalyticsOpen(true)
+  }, /*#__PURE__*/React.createElement(window.I.chart, null), " Analytics"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-ghost",
+    onClick: () => setActivityOpen(true)
+  }, /*#__PURE__*/React.createElement(window.I.history, null), " Activity log"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-ghost",
     onClick: () => setSettingsOpen(true)
   }, /*#__PURE__*/React.createElement(window.I.gear, null), " Site settings"), /*#__PURE__*/React.createElement("button", {
@@ -4580,6 +5204,12 @@ function AdminView({
       setSuggestionsOpen(false);
       refreshSuggestionCount();
     }
+  }), analyticsOpen && /*#__PURE__*/React.createElement(window.AnalyticsModal, {
+    navigate: navigate,
+    onClose: () => setAnalyticsOpen(false)
+  }), activityOpen && /*#__PURE__*/React.createElement(window.ActivityLogModal, {
+    navigate: navigate,
+    onClose: () => setActivityOpen(false)
   }), deleteTarget && /*#__PURE__*/React.createElement("div", {
     className: "modal-overlay",
     onMouseDown: () => setDeleteTarget(null)
