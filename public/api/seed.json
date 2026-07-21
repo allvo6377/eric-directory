@@ -799,10 +799,10 @@
     "source": "seed"
   },
   {
-    "id": "consolata-cathedral-meru",
-    "name": "Consolata Cathedral",
+    "id": "st-joseph-cathedral-meru",
+    "name": "St. Joseph Cathedral",
     "type": "Cathedral",
-    "patron": "Our Lady, Consolata",
+    "patron": "St. Joseph",
     "diocese": "Diocese of Meru",
     "deanery": "",
     "city": "Meru",
@@ -815,7 +815,7 @@
     },
     "founded": 1928,
     "tagline": "The cathedral serving the eastern slopes of Mt. Kenya.",
-    "description": "Consolata Cathedral in Meru is the seat of the Diocese of Meru, founded through the work of the Consolata Missionaries on the eastern slopes of Mt. Kenya. It serves a strong agricultural community and is a centre of catechesis and local-language liturgy.",
+    "description": "St. Joseph Cathedral in Meru is the seat of the Diocese of Meru, in a region first evangelised by the Consolata Missionaries on the eastern slopes of Mt. Kenya. It serves a strong agricultural community and is a centre of catechesis and local-language liturgy.",
     "priest": {
       "name": "Rev. Fr. Lawrence Mutugi",
       "title": "Cathedral Administrator"
@@ -993,10 +993,10 @@
     "source": "seed"
   },
   {
-    "id": "st-josephs-kericho",
-    "name": "St. Joseph's Cathedral",
+    "id": "sacred-heart-cathedral-kericho",
+    "name": "Sacred Heart of Jesus Cathedral",
     "type": "Cathedral",
-    "patron": "St. Joseph the Worker",
+    "patron": "The Sacred Heart of Jesus",
     "diocese": "Diocese of Kericho",
     "deanery": "",
     "city": "Kericho",
@@ -1009,7 +1009,7 @@
     },
     "founded": 1995,
     "tagline": "The cathedral amid Kenya's tea highlands.",
-    "description": "St. Joseph's Cathedral serves the Diocese of Kericho in the heart of Kenya's tea-growing highlands. A younger diocese, its cathedral community brings together tea-estate workers, townsfolk and rural parishes under the patronage of St. Joseph the Worker.",
+    "description": "The Cathedral of the Sacred Heart of Jesus serves the Diocese of Kericho in the heart of Kenya's tea-growing highlands. A younger diocese (established 1995), its cathedral community brings together tea-estate workers, townsfolk and rural parishes.",
     "priest": {
       "name": "Rev. Fr. Joseph Langat",
       "title": "Cathedral Administrator"
@@ -1093,26 +1093,26 @@
     "source": "seed"
   },
   {
-    "id": "our-lady-help-thika",
-    "name": "Our Lady Help of Christians Cathedral",
-    "type": "Cathedral",
-    "patron": "Our Lady Help of Christians",
-    "diocese": "Diocese of Thika",
-    "deanery": "",
+    "id": "st-patricks-thika",
+    "name": "St. Patrick's Parish",
+    "type": "Parish Church",
+    "patron": "St. Patrick",
+    "diocese": "Archdiocese of Nairobi",
+    "deanery": "Thika",
     "city": "Thika",
     "county": "Kiambu",
-    "address": "Kenyatta Highway, Thika Town",
+    "address": "Thika Town",
     "poBox": "",
     "coords": {
       "lat": -1.03326,
       "lng": 37.06933
     },
-    "founded": 1996,
-    "tagline": "The cathedral of the industrial town of Thika.",
-    "description": "Our Lady Help of Christians Cathedral is the seat of the Diocese of Thika, serving the bustling industrial town and the surrounding coffee and pineapple country. The cathedral community blends an urban working population with nearby rural parishes.",
+    "founded": null,
+    "tagline": "A Catholic parish in the town of Thika.",
+    "description": "St. Patrick's Parish serves the industrial town of Thika in the Thika Deanery of the Archdiocese of Nairobi, together with the surrounding coffee and pineapple country. (Thika is part of the Archdiocese of Nairobi, not a separate diocese.)",
     "priest": {
       "name": "Rev. Fr. Michael Ngugi",
-      "title": "Cathedral Administrator"
+      "title": "Parish Priest"
     },
     "clergy": [
       {
@@ -1174,12 +1174,12 @@
     ],
     "services": [
       "Industrial Chaplaincy",
-      "Cathedral Choir",
+      "Parish Choir",
       "Catholic Women Association",
       "Caritas Thika"
     ],
     "gallery": [
-      "cathedral facade",
+      "church facade",
       "main nave",
       "altar",
       "town parish life"

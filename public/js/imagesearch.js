@@ -39,7 +39,7 @@
       hero: "St-Therese-of-Lisieux-Cathedral-RC-Archdiocese-of-Kisumu-Kenya.jpg",
       images: [],
     },
-    "st-josephs-kericho": {
+    "sacred-heart-cathedral-kericho": {
       hero: "Sacred Heart Cathedral of Kericho Kenya by John Macaslan and Partners Image edmund sumner.jpg",
       images: [
         "KC W Facade Evening.jpg",
